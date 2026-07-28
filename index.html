@@ -4,23 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Лунный атлас</title>
-<meta name="description" content="Интерактивная карта видимой стороны Луны: 60 объектов с названиями, размерами и фактами. Тень идёт по настоящей фазе — карта показывает, что видно в бинокль именно сегодня.">
+<meta id="m-desc" name="description" content="Интерактивная карта видимой стороны Луны: 60 объектов с названиями, размерами и фактами. Тень идёт по настоящей фазе — карта показывает, что доступно вашей оптике именно сегодня.">
 <link rel="canonical" href="https://andrewivlev.github.io/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://andrewivlev.github.io/">
-<meta property="og:site_name" content="Лунный атлас">
-<meta property="og:locale" content="ru_RU">
-<meta property="og:title" content="Лунный атлас">
-<meta property="og:description" content="60 объектов с названиями, размерами и фактами. Кратеры в истинном масштабе, тень идёт по настоящей фазе — видно, что доступно сегодня.">
+<meta id="m-og-site" property="og:site_name" content="Лунный атлас">
+<meta id="m-og-locale" property="og:locale" content="ru_RU">
+<meta id="m-og-title" property="og:title" content="Лунный атлас">
+<meta id="m-og-desc" property="og:description" content="60 объектов с названиями, размерами и фактами. Кратеры в истинном масштабе, тень идёт по настоящей фазе — видно, что доступно сегодня.">
 <meta property="og:image" content="https://andrewivlev.github.io/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Схема видимой стороны Луны с подписанными морями и кратерами">
+<meta id="m-og-alt" property="og:image:alt" content="Схема видимой стороны Луны с подписанными морями и кратерами">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Лунный атлас">
-<meta name="twitter:description" content="60 объектов с названиями, размерами и фактами. Тень идёт по настоящей фазе.">
+<meta id="m-tw-title" name="twitter:title" content="Лунный атлас">
+<meta id="m-tw-desc" name="twitter:description" content="60 объектов с названиями, размерами и фактами. Тень идёт по настоящей фазе.">
 <meta name="twitter:image" content="https://andrewivlev.github.io/og.png">
 <meta name="theme-color" content="#0A0D12">
+<link rel="alternate" hreflang="ru" href="https://andrewivlev.github.io/?lang=ru">
+<link rel="alternate" hreflang="en" href="https://andrewivlev.github.io/?lang=en">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' fill='%23E4DCC9'/><path d='M6.5 6.5a13 13 0 0 0 0 19 15.5 15.5 0 0 1 0-19z' fill='%230A0D12'/></svg>">
 <style>
   :root{
@@ -54,10 +56,19 @@
   .wrap{max-width:1180px;margin:0 auto;padding:34px 20px 90px}
 
   /* ---------- masthead ---------- */
+  .top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin:0 0 14px}
   .eyebrow{
     font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--muted);margin:0 0 14px;
+    color:var(--muted);margin:0;
   }
+  .langs{display:flex;gap:1px;background:var(--line);border:1px solid var(--line);flex:none}
+  .langs button{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;
+    background:var(--ink-2);color:var(--muted);border:none;padding:6px 10px;cursor:pointer;
+    transition:color .15s,background .15s}
+  .langs button:hover{color:var(--bone-dim)}
+  .langs button[aria-pressed=true]{color:var(--ink);background:var(--verdigris)}
+  .langs button:focus-visible{outline:1px solid var(--verdigris);outline-offset:3px}
   h1{
     font-family:var(--serif);font-weight:400;font-size:clamp(30px,7vw,52px);
     line-height:1.05;letter-spacing:-.015em;color:var(--bone);margin:0 0 10px;
@@ -66,10 +77,10 @@
   .lede{max-width:56ch;font-size:15.5px;color:#A9A497;margin:0 0 26px}
 
   .readout{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+    display:flex;flex-wrap:wrap;
     gap:1px;background:var(--line);border:1px solid var(--line);margin:0 0 30px;
   }
-  .readout div{background:var(--ink-2);padding:11px 13px}
+  .readout div{background:var(--ink-2);padding:11px 13px;flex:1 1 132px}
   .readout dt{font-family:var(--mono);font-size:10px;letter-spacing:.14em;
     text-transform:uppercase;color:var(--muted);margin:0 0 4px}
   .readout dd{margin:0;font-family:var(--mono);font-size:15px;color:var(--bone)}
@@ -101,6 +112,25 @@
   input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-radius:50%;
     background:var(--amber);cursor:pointer}
   input[type=range]:focus-visible{outline:1px solid var(--verdigris);outline-offset:4px}
+
+  .mag-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:12px;
+    padding-top:12px;border-top:1px solid var(--line)}
+  .mag-row label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted)}
+  .mag-field{display:flex;align-items:baseline;gap:4px;font-family:var(--mono);
+    font-size:13px;color:var(--amber)}
+  .mag-field input{font-family:var(--mono);font-size:13px;color:var(--amber);
+    background:var(--ink-3);border:1px solid var(--line);padding:5px 7px;width:66px;
+    text-align:right;-moz-appearance:textfield}
+  .mag-field input:focus-visible{outline:1px solid var(--verdigris);outline-offset:2px}
+  .place-field{display:flex;align-items:center;gap:9px;font-family:var(--mono);
+    font-size:12px;color:var(--bone-dim)}
+  .place-field button{font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+    text-transform:uppercase;background:transparent;color:var(--muted);
+    border:1px solid var(--line);padding:5px 9px;cursor:pointer;
+    transition:color .15s,border-color .15s}
+  .place-field button:hover{color:var(--bone-dim);border-color:rgba(169,138,75,.45)}
+  .place-field button:focus-visible{outline:1px solid var(--verdigris);outline-offset:2px}
 
   .toggles{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
   .toggles button{
@@ -190,25 +220,30 @@
 <div class="wrap">
 
 <header>
-  <p class="eyebrow">Будва · 42.3° с.ш. &nbsp;/&nbsp; <span id="dateline"></span> &nbsp;/&nbsp; бинокль 10×</p>
-  <h1>Что видно на Луне<br><em>сегодня вечером</em></h1>
-  <p class="lede">Векторная карта видимой стороны, построенная по селенографическим координатам:
-     кратеры нанесены в истинном масштабе и с учётом ракурса у края диска. Тень движется по
-     настоящей фазе — тяните ползунок, чтобы увидеть любую ночь цикла. Тапайте объекты.</p>
+  <div class="top">
+    <p class="eyebrow" id="eyebrow"></p>
+    <div class="langs" id="langs" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="false">Eng</button>
+      <button type="button" data-lang="ru" aria-pressed="true">Рус</button>
+    </div>
+  </div>
+  <h1 id="h1"></h1>
+  <p class="lede" id="lede"></p>
 
   <dl class="readout">
-    <div><dt>Фаза</dt><dd id="r-phase">растущая</dd></div>
-    <div><dt>Освещено</dt><dd id="r-illum">96%</dd></div>
-    <div><dt>Терминатор</dt><dd id="r-term">66° з.д.</dd></div>
-    <div><dt>Предел 10×</dt><dd>≈20 км <small>детали</small></dd></div>
-    <div><dt>Масштаб</dt><dd>1 px ≈ 3,8 км</dd></div>
+    <div><dt id="k-phase"></dt><dd id="r-phase"></dd></div>
+    <div><dt id="k-illum"></dt><dd id="r-illum"></dd></div>
+    <div><dt id="k-term"></dt><dd id="r-term"></dd></div>
+    <div><dt id="k-limit"></dt><dd id="r-limit"></dd></div>
+    <div><dt id="k-alt"></dt><dd id="r-alt"></dd></div>
+    <div><dt id="k-tilt"></dt><dd id="r-tilt"></dd></div>
+    <div><dt id="k-scale"></dt><dd id="r-scale"></dd></div>
   </dl>
 </header>
 
 <div class="stage">
   <section class="chart">
-    <svg id="moon" viewBox="0 0 1000 1000" role="img"
-         aria-label="Схема видимой стороны Луны с подписями морей и кратеров">
+    <svg id="moon" viewBox="0 0 1000 1000" role="img" aria-label="">
       <defs>
         <radialGradient id="gLimb" cx="50%" cy="50%" r="50%">
           <stop offset="72%" stop-color="#E4DCC9"/>
@@ -219,76 +254,83 @@
           <stop offset="100%" stop-color="#FFFBF0" stop-opacity="0"/>
         </radialGradient>
         <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+        <clipPath id="limb"><circle cx="500" cy="500" r="460"/></clipPath>
       </defs>
 
       <circle cx="500" cy="500" r="472" fill="none" stroke="rgba(169,138,75,.16)"/>
-      <circle id="disk" cx="500" cy="500" r="460" fill="url(#gLimb)"/>
-      <g id="gridL" opacity=".5"></g>
-      <g id="maria"></g>
-      <g id="rays"></g>
-      <g id="ranges"></g>
-      <g id="craters"></g>
-      <g id="sites" style="display:none"></g>
-      <g id="shadow"></g>
-      <g id="termband"></g>
-      <g id="labels"></g>
-      <g id="hits"></g>
-      <g id="frame"></g>
+      <g id="sky">
+        <circle id="disk" cx="500" cy="500" r="460" fill="url(#gLimb)"/>
+        <g id="gridL" opacity=".5"></g>
+        <g id="maria" clip-path="url(#limb)"></g>
+        <g id="rays" clip-path="url(#limb)"></g>
+        <g id="ranges"></g>
+        <g id="craters"></g>
+        <g id="sites" style="display:none"></g>
+        <g id="shadow"></g>
+        <g id="termband"></g>
+        <g id="labels"></g>
+        <g id="hits"></g>
+        <g id="frame"></g>
+      </g>
+      <g id="scale"></g>
     </svg>
-    <p class="hint">Север сверху · восток справа (как в бинокль без призмы-перевёртыша)</p>
+    <p class="hint" id="hint"></p>
 
     <div class="controls">
       <div class="slider-row">
-        <label for="age">Возраст Луны</label>
-        <output id="ageOut">13.0 сут</output>
+        <label for="age" id="k-age"></label>
+        <output id="ageOut"></output>
       </div>
       <input id="age" type="range" min="0" max="29.53" step="0.05">
+      <div class="mag-row">
+        <label for="mag" id="k-mag"></label>
+        <span class="mag-field"><input id="mag" type="number" min="2" max="400" step="1" value="10" inputmode="numeric"><span aria-hidden="true">×</span></span>
+      </div>
+      <div class="mag-row">
+        <span id="k-place"></span>
+        <span class="place-field"><span id="placeVal"></span><button type="button" id="geo"></button></span>
+      </div>
       <div class="toggles">
-        <button id="t-today" aria-pressed="true">Сегодня</button>
-        <button id="t-full" aria-pressed="false">Снять тень</button>
-        <button id="t-names" aria-pressed="false">Все подписи</button>
-        <button id="t-bino" aria-pressed="false">Только для 10×</button>
-        <button id="t-sites" aria-pressed="false">Места посадок</button>
+        <button id="t-today" aria-pressed="true"></button>
+        <button id="t-full" aria-pressed="false"></button>
+        <button id="t-sky" aria-pressed="false"></button>
+        <button id="t-names" aria-pressed="false"></button>
+        <button id="t-bino" aria-pressed="false"></button>
+        <button id="t-sites" aria-pressed="false"></button>
       </div>
     </div>
   </section>
 
   <aside>
     <article class="card" id="card">
-      <p class="kicker" id="c-kind">Кратер</p>
-      <h2 id="c-name">Copernicus</h2>
-      <p class="ru" id="c-ru">Коперник</p>
+      <p class="kicker" id="c-kind"></p>
+      <h2 id="c-name"></h2>
+      <p class="ru" id="c-ru"></p>
       <dl class="metrics">
-        <div><dt>Диаметр</dt><dd id="c-d">93 км</dd></div>
-        <div><dt>Глубина / высота</dt><dd id="c-h">3.8 км</dd></div>
-        <div><dt>Координаты</dt><dd id="c-co">9.6° с · 20.1° з</dd></div>
-        <div><dt>В бинокль 10×</dt><dd id="c-v">уверенно</dd></div>
+        <div><dt id="k-dia"></dt><dd id="c-d"></dd></div>
+        <div><dt id="k-dep"></dt><dd id="c-h"></dd></div>
+        <div><dt id="k-co"></dt><dd id="c-co"></dd></div>
+        <div><dt id="k-vis"></dt><dd id="c-v"></dd></div>
       </dl>
       <p class="fact" id="c-fact"></p>
       <p class="verdict" id="c-now"></p>
     </article>
 
     <section class="tonight">
-      <h3>Лучший контраст сегодня</h3>
-      <p class="sub">Объекты у линии терминатора: солнце там стоит низко, тени вытянуты в десятки
-         километров, и рельеф читается лучше всего.</p>
+      <h3 id="tonightTitle"></h3>
+      <p class="sub" id="tonightSub"></p>
       <ol id="tonightList"></ol>
     </section>
   </aside>
 </div>
 
 <section class="cat">
-  <h2>Каталог: <span id="catCount">—</span> объектов видимой стороны</h2>
-  <p>Размер в скобках — диаметр по большой оси. Для сравнения: Черногория от Херцег-Нови до
-     Улциня — примерно 100 км, то есть один Коперник.</p>
+  <h2 id="catTitle"></h2>
+  <p id="catNote"></p>
   <div class="grid" id="cat"></div>
 </section>
 
-<footer>
-  <span>Проекция ортографическая, R = 1737 км</span>
-  <span>Координаты и размеры — по данным IAU / USGS Gazetteer of Planetary Nomenclature</span>
-  <span>Очертания морей схематичны</span>
-</footer>
+<footer id="footer"></footer>
 </div>
 
 <script>
@@ -308,170 +350,346 @@ function proj(lat, lon){
   return {x, y, f, ang, d};
 }
 
+/* ---------- interface strings ----------
+   Every user-visible string lives here, keyed by language. Object names and
+   facts sit with the data below (fields `ru` / `en`).                        */
+const I18N = {
+  ru:{
+    htmlLang:"ru", ogLocale:"ru_RU",
+    title:"Лунный атлас",
+    metaDesc:"Интерактивная карта видимой стороны Луны: 60 объектов с названиями, размерами и фактами. Тень идёт по настоящей фазе — карта показывает, что доступно вашей оптике именно сегодня.",
+    ogDesc:"60 объектов с названиями, размерами и фактами. Кратеры в истинном масштабе, тень идёт по настоящей фазе — видно, что доступно сегодня.",
+    twDesc:"60 объектов с названиями, размерами и фактами. Тень идёт по настоящей фазе.",
+    svgAlt:"Схема видимой стороны Луны с подписями морей и кратеров",
+    eyebrow:(d,m,p) => p + " \u00a0/\u00a0 " + d + " \u00a0/\u00a0 оптика " + m + "×",
+    home:"Будва", coords:(la,lo) => num(Math.abs(la).toFixed(2)) + "° " + (la >= 0 ? "с.ш." : "ю.ш.") + " " + num(Math.abs(lo).toFixed(2)) + "° " + (lo >= 0 ? "в.д." : "з.д."),
+    kPlace:"Место наблюдения", geoBtn:"Моё место", geoWait:"Ищем…", geoDenied:"Нет доступа",
+    kAlt:"Над горизонтом", altUp:(a,az) => a + "° " + az, altDown:a => "−" + a + "° <small>под горизонтом</small>",
+    kTilt:"Наклон диска", tilt:q => (q > 0 ? "+" : "") + q + "°",
+    dirs:["С","СВ","В","ЮВ","Ю","ЮЗ","З","СЗ"],
+    tSky:"Как в небе",
+    h1:'Лунный <em>атлас</em>',
+    lede:"Векторная карта видимой стороны, построенная по селенографическим координатам: кратеры нанесены в истинном масштабе и с учётом ракурса у края диска. Тень движется по настоящей фазе — тяните ползунок, чтобы увидеть любую ночь цикла. Тапайте объекты.",
+    kPhase:"Фаза", kIllum:"Освещено", kTerm:"Терминатор",
+    kLimit:m => "Предел " + m + "×", limit:km => "≈" + km + " км <small>детали</small>",
+    kMag:"Увеличение", magHint:"крат", magTitle:"Увеличение вашей оптики",
+    kScale:"Масштаб", scale:"1 px ≈ 3,8 км",
+    hint:"Север сверху · восток справа (как в прямой оптике без призмы-перевёртыша)",
+    kAge:"Возраст Луны", days:v => v + " сут",
+    tToday:"Сегодня", tShadowOff:"Снять тень", tShadowOn:"Вернуть тень",
+    tNames:"Все подписи", tBino:m => "Только для " + m + "×", tSites:"Места посадок",
+    kDia:"Диаметр", kDep:"Глубина / высота", kCo:"Координаты", kVis:m => "В " + m + "× оптику",
+    kindMare:"Море · лавовая равнина", kindCrater:"Ударный кратер", kindRange:"Горы и разломы",
+    vis:{1:"уверенно", 2:"на пределе"}, visNo:req => "нужно от " + req + "×",
+    deep:v => v + " км глубина", high:v => "до " + v + " км",
+    dash:"—",
+    phases:["новолуние","молодой серп","первая четверть","растущая горбатая",
+            "полнолуние","убывающая горбатая","последняя четверть","старый серп"],
+    tonightTitle:"Лучший контраст сегодня",
+    tonightSub:"Объекты у линии терминатора: солнце там стоит низко, тени вытянуты в десятки километров, и рельеф читается лучше всего.",
+    emptyNew:"Новолуние: диск не освещён — смотреть нечего.",
+    emptyNone:"У терминатора сейчас нет крупных объектов из каталога. Попробуйте сдвинуть дату на день-два.",
+    emptyMag:m => "При " + m + "× ни один объект каталога не различить — поставьте кратность от 6×.",
+    vShadowOff:"Тень снята — карта показана как в полнолуние.",
+    vDark:d => "Сейчас в ночной тени: подождите " + d + " сут или снимите тень.",
+    vTerm:"У самого терминатора: рельеф в максимальном контрасте — смотрите сегодня.",
+    vGood:"Тени ещё длинные, деталь читается хорошо.",
+    vFlat:"Солнце стоит высоко: видно как пятно по яркости, без рельефа.",
+    catTitle:n => "Каталог: " + n + " объектов видимой стороны",
+    catNote:"Размер в скобках — диаметр по большой оси. Для сравнения: Черногория от Херцег-Нови до Улциня — примерно 100 км, то есть один Коперник.",
+    groups:["Моря и океаны","Крупные кратеры (>90 км)","Средние и малые кратеры","Горы, долины, разломы"],
+    footer:["Проекция ортографическая, R = 1737 км",
+            "Координаты и размеры — по данным IAU / USGS Gazetteer of Planetary Nomenclature",
+            "Очертания морей схематичны"],
+    compass:["С","Ю","В","З"], bar:"500 км",
+    latN:"с", latS:"ю", lonE:"в", lonW:"з", termE:"в.д.", termW:"з.д."
+  },
+  en:{
+    htmlLang:"en", ogLocale:"en_US",
+    title:"Lunar Atlas",
+    metaDesc:"An interactive map of the Moon's near side: 60 features with names, sizes and facts. The shadow follows the real phase — the map shows what your optics can reach tonight.",
+    ogDesc:"60 features with names, sizes and facts. Craters at true scale, the shadow follows the real phase — see what is within reach today.",
+    twDesc:"60 features with names, sizes and facts. The shadow follows the real phase.",
+    svgAlt:"Diagram of the Moon's near side with labelled maria and craters",
+    eyebrow:(d,m,p) => p + " \u00a0/\u00a0 " + d + " \u00a0/\u00a0 " + m + "× optics",
+    home:"Budva", coords:(la,lo) => Math.abs(la).toFixed(2) + "° " + (la >= 0 ? "N" : "S") + " " + Math.abs(lo).toFixed(2) + "° " + (lo >= 0 ? "E" : "W"),
+    kPlace:"Observing site", geoBtn:"Use my location", geoWait:"Locating…", geoDenied:"No access",
+    kAlt:"Above horizon", altUp:(a,az) => a + "° " + az, altDown:a => "−" + a + "° <small>below horizon</small>",
+    kTilt:"Disc tilt", tilt:q => (q > 0 ? "+" : "") + q + "°",
+    dirs:["N","NE","E","SE","S","SW","W","NW"],
+    tSky:"As in the sky",
+    h1:'Moon <em>Atlas</em>',
+    lede:"A vector map of the near side plotted from selenographic coordinates: craters are drawn at true scale, foreshortened towards the limb. The shadow follows the real phase — drag the slider to see any night of the cycle. Tap any feature.",
+    kPhase:"Phase", kIllum:"Illuminated", kTerm:"Terminator",
+    kLimit:m => m + "× limit", limit:km => "≈" + km + " km <small>detail</small>",
+    kMag:"Magnification", magHint:"×", magTitle:"Magnification of your optics",
+    kScale:"Scale", scale:"1 px ≈ 3.8 km",
+    hint:"North up · east right (as in straight-through optics without a reversing prism)",
+    kAge:"Moon age", days:v => v + " days",
+    tToday:"Today", tShadowOff:"Drop shadow", tShadowOn:"Restore shadow",
+    tNames:"All labels", tBino:m => m + "× only", tSites:"Landing sites",
+    kDia:"Diameter", kDep:"Depth / height", kCo:"Coordinates", kVis:m => "At " + m + "×",
+    kindMare:"Mare · lava plain", kindCrater:"Impact crater", kindRange:"Mountains & faults",
+    vis:{1:"easy", 2:"at the limit"}, visNo:req => "needs " + req + "× or more",
+    deep:v => v + " km deep", high:v => "up to " + v + " km",
+    dash:"—",
+    phases:["new moon","young crescent","first quarter","waxing gibbous",
+            "full moon","waning gibbous","last quarter","old crescent"],
+    tonightTitle:"Best contrast tonight",
+    tonightSub:"Features along the terminator: the sun sits low there, shadows stretch for tens of kilometres, and relief reads at its sharpest.",
+    emptyNew:"New moon: the disc is unlit — nothing to see.",
+    emptyNone:"No major catalogue features sit near the terminator right now. Try shifting the date by a day or two.",
+    emptyMag:m => "Nothing in the catalogue is within reach of " + m + "× optics — try 6× or more.",
+    vShadowOff:"Shadow dropped — the map is shown as at full moon.",
+    vDark:d => "In night shadow now: wait " + d + " days, or drop the shadow.",
+    vTerm:"Right at the terminator: relief at maximum contrast — look tonight.",
+    vGood:"Shadows are still long, the detail reads well.",
+    vFlat:"The sun stands high: visible as a brightness patch, with no relief.",
+    catTitle:n => "Catalogue: " + n + " features of the near side",
+    catNote:"The size given is the diameter along the major axis. For scale: Montenegro from Herceg Novi to Ulcinj is about 100 km — one Copernicus.",
+    groups:["Maria and oceans","Large craters (>90 km)","Medium and small craters","Mountains, valleys, faults"],
+    footer:["Orthographic projection, R = 1737 km",
+            "Coordinates and sizes after the IAU / USGS Gazetteer of Planetary Nomenclature",
+            "Mare outlines are schematic"],
+    compass:["N","S","E","W"], bar:"500 km",
+    latN:"N", latS:"S", lonE:"E", lonW:"W", termE:"E", termW:"W"
+  }
+};
+
+const MONTHS = {
+  ru:["января","февраля","марта","апреля","мая","июня",
+      "июля","августа","сентября","октября","ноября","декабря"],
+  en:["January","February","March","April","May","June",
+      "July","August","September","October","November","December"]
+};
+
 /* ---------- data ----------
-   v: 1 = видно уверенно в 10×, 2 = на пределе, 3 = нужен телескоп        */
+   v: 1 = easy in 10×, 2 = at the limit, 3 = telescope needed
+   f: fact text per language                                                 */
 const MARIA = [
  {n:"Mare Imbrium", ru:"Море Дождей", lat:32.8, lon:-15.6, dia:1146, v:1,
   cx:396, cy:251, rx:142, ry:126, rot:0, fs:30,
-  f:"Крупнейший ударный бассейн видимой стороны. Тело диаметром ~250 км ударило сюда ~3.9 млрд лет назад и выбило кольцо горных цепей — Апеннины, Альпы, Кавказ, Юра. Через полмиллиарда лет чашу залила базальтовая лава."},
+  f:{ru:"Крупнейший ударный бассейн видимой стороны. Тело диаметром ~250 км ударило сюда ~3.9 млрд лет назад и выбило кольцо горных цепей — Апеннины, Альпы, Кавказ, Юра. Через полмиллиарда лет чашу залила базальтовая лава.",
+     en:"The largest impact basin on the near side. A body some 250 km across struck here ~3.9 billion years ago and threw up a ring of mountain chains — the Apennines, Alps, Caucasus and Jura. Half a billion years later basaltic lava flooded the bowl."}},
  {n:"Oceanus Procellarum", ru:"Океан Бурь", lat:18.4, lon:-57.4, dia:2568, v:1,
   parts:[[150,382,92,212,-6],[233,252,80,110,22],[243,566,92,142,-16]], cx:150, cy:400, fs:26,
-  f:"Единственный «океан» на Луне: около 4 млн км² — больше Индии. Не бассейн, а огромное лавовое поле неправильной формы; здесь толща базальта местами превышает 3 км."},
+  f:{ru:"Единственный «океан» на Луне: около 4 млн км² — больше Индии. Не бассейн, а огромное лавовое поле неправильной формы; здесь толща базальта местами превышает 3 км.",
+     en:"The Moon's only \u201cocean\u201d: about 4 million km², larger than India. Not a basin but a vast irregular lava field; in places the basalt is over 3 km thick."}},
  {n:"Mare Tranquillitatis", ru:"Море Спокойствия", lat:8.5, lon:31, dia:873, v:1,
   cx:734, cy:432, rx:96, ry:106, rot:-26, fs:24,
-  f:"20 июля 1969 «Орёл» сел у его юго-западного края. Море богато титаном: базальты здесь тёмнее и синее соседних, что видно даже на цветных фотографиях."},
+  f:{ru:"20 июля 1969 «Орёл» сел у его юго-западного края. Море богато титаном: базальты здесь тёмнее и синее соседних, что видно даже на цветных фотографиях.",
+     en:"On 20 July 1969 the Eagle landed near its south-western edge. The mare is titanium-rich: its basalts are darker and bluer than their neighbours, visible even in colour photographs."}},
  {n:"Mare Serenitatis", ru:"Море Ясности", lat:28, lon:17.5, dia:707, v:1,
   cx:622, cy:284, rx:86, ry:96, rot:16, fs:23,
-  f:"Самое «ровное» из морей: перепад высот по центру — считанные сотни метров. У его края, в долине Таурус-Литтров, работал экипаж «Аполлона-17» — последние люди на Луне."},
+  f:{ru:"Самое «ровное» из морей: перепад высот по центру — считанные сотни метров. У его края, в долине Таурус-Литтров, работал экипаж «Аполлона-17» — последние люди на Луне.",
+     en:"The flattest of the maria: relief across its centre amounts to a few hundred metres. At its rim, in the Taurus–Littrow valley, the Apollo 17 crew worked — the last people on the Moon."}},
  {n:"Mare Frigoris", ru:"Море Холода", lat:56, lon:1.4, dia:1596, v:1,
   cx:482, cy:128, rx:258, ry:34, rot:0, fs:22,
-  f:"Не круглый бассейн, а вытянутая дуга длиной 1600 км вдоль северного края диска — прогиб коры за пределами вала Моря Дождей."},
+  f:{ru:"Не круглый бассейн, а вытянутая дуга длиной 1600 км вдоль северного края диска — прогиб коры за пределами вала Моря Дождей.",
+     en:"Not a circular basin but a 1,600 km arc along the northern edge of the disc — a downwarp of the crust outside the Imbrium rim."}},
  {n:"Mare Crisium", ru:"Море Кризисов", lat:17, lon:59, dia:556, v:1,
   cx:877, cy:366, rx:43, ry:76, rot:-8, fs:17, short:"Crisium",
-  f:"Обособленный тёмный овал у правого края — заметен невооружённым глазом. В реальности он шире, чем выше (556 × 418 км), но ракурс сжимает его в вертикальный эллипс. Здесь «Луна-24» взяла грунт в 1976-м."},
+  f:{ru:"Обособленный тёмный овал у правого края — заметен невооружённым глазом. В реальности он шире, чем выше (556 × 418 км), но ракурс сжимает его в вертикальный эллипс. Здесь «Луна-24» взяла грунт в 1976-м.",
+     en:"An isolated dark oval near the right limb, visible to the naked eye. It is actually wider than it is tall (556 × 418 km), but foreshortening squeezes it into a vertical ellipse. Luna 24 collected soil here in 1976."}},
  {n:"Mare Fecunditatis", ru:"Море Изобилия", lat:-7.8, lon:51.3, dia:840, v:1,
   cx:856, cy:562, rx:46, ry:98, rot:-6, fs:16, short:"Fecunditatis",
-  f:"Сюда в 1970-м села «Луна-16» — первый автомат, доставивший лунный грунт на Землю. Толщина лавы здесь мала, поэтому море светлее большинства соседей."},
+  f:{ru:"Сюда в 1970-м села «Луна-16» — первый автомат, доставивший лунный грунт на Землю. Толщина лавы здесь мала, поэтому море светлее большинства соседей.",
+     en:"Luna 16 landed here in 1970 — the first robotic probe to bring lunar soil back to Earth. The lava is thin here, so the mare is lighter than most of its neighbours."}},
  {n:"Mare Nubium", ru:"Море Облаков", lat:-21.3, lon:-16.6, dia:715, v:1,
   cx:378, cy:667, rx:86, ry:72, rot:0, fs:21,
-  f:"На его восточной кромке — Прямая Стена, самый известный лунный разлом. Само море изрыто «затопленными» кратерами, от которых остались лишь дуги валов."},
+  f:{ru:"На его восточной кромке — Прямая Стена, самый известный лунный разлом. Само море изрыто «затопленными» кратерами, от которых остались лишь дуги валов.",
+     en:"Along its eastern rim runs the Straight Wall, the best-known lunar fault. The mare itself is pitted with flooded craters, of which only arcs of rim survive."}},
  {n:"Mare Humorum", ru:"Море Влажности", lat:-24.4, lon:-38.6, dia:389, v:1,
   cx:239, cy:690, rx:43, ry:53, rot:-10, fs:16, short:"Humorum",
-  f:"Компактный круглый бассейн — учебный пример: чётко видно кольцевой вал, а по краям — концентрические трещины, где лава продавила кору вниз."},
+  f:{ru:"Компактный круглый бассейн — учебный пример: чётко видно кольцевой вал, а по краям — концентрические трещины, где лава продавила кору вниз.",
+     en:"A compact circular basin and a textbook case: the ring rim is clear, and around the edges run concentric fractures where the lava pressed the crust down."}},
  {n:"Mare Nectaris", ru:"Море Нектара", lat:-15.2, lon:35.5, dia:333, v:1,
   cx:758, cy:621, rx:39, ry:49, rot:-18, fs:15, short:"Nectaris",
-  f:"Небольшое море, зато по нему датируют всю лунную геологию: удар, создавший бассейн Нектара, задаёт границу нектарского периода (~3.9 млрд лет)."},
+  f:{ru:"Небольшое море, зато по нему датируют всю лунную геологию: удар, создавший бассейн Нектара, задаёт границу нектарского периода (~3.9 млрд лет).",
+     en:"A small mare, yet lunar geology is dated by it: the impact that formed the Nectaris basin sets the boundary of the Nectarian period (~3.9 billion years)."}},
  {n:"Mare Vaporum", ru:"Море Паров", lat:13.3, lon:3.6, dia:245, v:2,
   cx:528, cy:394, rx:39, ry:27, rot:0, fs:15,
-  f:"Тёмное пятно между Апеннинами и центром диска. Рядом — Гигинова борозда, трещина с провалившимися участками кровли лавовой трубы."},
+  f:{ru:"Тёмное пятно между Апеннинами и центром диска. Рядом — Гигинова борозда, трещина с провалившимися участками кровли лавовой трубы.",
+     en:"A dark patch between the Apennines and the centre of the disc. Nearby runs Hyginus Rille, a fissure with collapsed stretches of lava-tube roof."}},
  {n:"Mare Cognitum", ru:"Море Познанное", lat:-10, lon:-23, dia:350, v:2,
   cx:323, cy:580, rx:43, ry:33, rot:0, fs:15,
-  f:"Названо в честь «Рейнджера-7», передавшего первые детальные снимки перед тем, как разбиться здесь в 1964-м. Неподалёку садился «Аполлон-14»."},
+  f:{ru:"Названо в честь «Рейнджера-7», передавшего первые детальные снимки перед тем, как разбиться здесь в 1964-м. Неподалёку садился «Аполлон-14».",
+     en:"Named for Ranger 7, which sent back the first detailed images before crashing here in 1964. Apollo 14 landed not far away."}},
  {n:"Sinus Iridum", ru:"Залив Радуги", lat:44, lon:-31.5, dia:236, v:2,
   cx:327, cy:180, rx:33, ry:27, rot:-28, fs:14, short:"S. Iridum",
-  f:"Кратер, у которого лава смыла всю южную стенку — получилась бухта, обрамлённая горами Юра. При низком солнце их вершины светятся над тенью: эффект «жемчужного ожерелья»."}
+  f:{ru:"Кратер, у которого лава смыла всю южную стенку — получилась бухта, обрамлённая горами Юра. При низком солнце их вершины светятся над тенью: эффект «жемчужного ожерелья».",
+     en:"A crater whose southern wall the lava washed away entirely, leaving a bay framed by the Jura mountains. Under a low sun their peaks glow above the shadow — the \u201cjewelled handle\u201d effect."}}
 ];
 
 const CRATERS = [
  {n:"Tycho", ru:"Тихо", lat:-43.4, lon:-11.1, dia:85, dep:4.8, v:1, key:1,
-  f:"Молодой (≈108 млн лет) и потому самый яркий центр лучевой системы: светлые выбросы тянутся на 1500 км и в полнолуние делают юг диска похожим на разбитое стекло. В бинокль — белый «пупок» Луны."},
+  f:{ru:"Молодой (≈108 млн лет) и потому самый яркий центр лучевой системы: светлые выбросы тянутся на 1500 км и в полнолуние делают юг диска похожим на разбитое стекло. В любую оптику — белый «пупок» Луны.",
+     en:"Young (≈108 million years) and therefore the brightest ray system on the Moon: pale ejecta run for 1,500 km and at full moon make the south of the disc look like shattered glass. Even the smallest optics show it as the Moon's white navel."}},
  {n:"Copernicus", ru:"Коперник", lat:9.6, lon:-20.1, dia:93, dep:3.8, v:1, key:1,
-  f:"Эталонный крупный кратер: террасированные стены-оползни, центральная горка высотой 1.2 км, вал поднят на 900 м над окружающей равниной. Возраст ~800 млн лет."},
+  f:{ru:"Эталонный крупный кратер: террасированные стены-оползни, центральная горка высотой 1.2 км, вал поднят на 900 м над окружающей равниной. Возраст ~800 млн лет.",
+     en:"The reference large crater: terraced landslide walls, a 1.2 km central peak, a rim raised 900 m above the surrounding plain. About 800 million years old."}},
  {n:"Clavius", ru:"Клавий", lat:-58.8, lon:-14.1, dia:225, dep:3.5, v:1, key:1,
-  f:"Одна из крупнейших воронок видимой стороны — 225 км, внутри поместилась бы Черногория. По дну идёт дуга кратеров, убывающих по размеру, как убегающая гамма."},
+  f:{ru:"Одна из крупнейших воронок видимой стороны — 225 км, внутри поместилась бы Черногория. По дну идёт дуга кратеров, убывающих по размеру, как убегающая гамма.",
+     en:"One of the largest craters on the near side — 225 km, wide enough to hold Montenegro. An arc of craters crosses its floor, shrinking in size like a descending scale."}},
  {n:"Plato", ru:"Платон", lat:51.6, lon:-9.3, dia:101, dep:1.0, v:1, key:1,
-  f:"Тёмный ровный «блин» на светлом фоне северных горных областей: чашу залила лава, и дно стало гладким, как море. Резкий контраст делает его легкой добычей для бинокля."},
+  f:{ru:"Тёмный ровный «блин» на светлом фоне северных горных областей: чашу залила лава, и дно стало гладким, как море. Резкий контраст делает его лёгкой добычей даже для самой скромной оптики.",
+     en:"A dark, level disc against the bright northern highlands: lava flooded the bowl and left the floor as smooth as a mare. The sharp contrast makes it easy prey even for modest optics."}},
  {n:"Aristarchus", ru:"Аристарх", lat:23.7, lon:-47.4, dia:40, dep:3.7, v:1, key:1,
-  f:"Самая яркая крупная деталь Луны — отражает ~28% света, вдвое больше среднего. Возраст всего ~450 млн лет. Рядом — извилистая долина Шрётера, канал древнего лавового потока."},
+  f:{ru:"Самая яркая крупная деталь Луны — отражает ~28% света, вдвое больше среднего. Возраст всего ~450 млн лет. Рядом — извилистая долина Шрётера, канал древнего лавового потока.",
+     en:"The brightest large feature on the Moon, reflecting ~28% of the light — twice the average. Only ~450 million years old. Beside it winds Schröter's Valley, the channel of an ancient lava flow."}},
  {n:"Grimaldi", ru:"Гримальди", lat:-5.5, lon:-68.3, dia:173, v:1, key:1,
-  f:"Самое тёмное место видимой стороны: альбедо ~6%, темнее любого моря. Ищите почти у самого западного края — из-за ракурса он сплющен в узкий эллипс."},
+  f:{ru:"Самое тёмное место видимой стороны: альбедо ~6%, темнее любого моря. Ищите почти у самого западного края — из-за ракурса он сплющен в узкий эллипс.",
+     en:"The darkest spot on the near side: albedo ~6%, darker than any mare. Look almost at the western limb — foreshortening flattens it into a narrow ellipse."}},
  {n:"Ptolemaeus", ru:"Птолемей", lat:-9.2, lon:-1.8, dia:153, v:1, key:1,
-  f:"Верхнее звено знаменитой цепочки из трёх кратеров в самом центре диска. Дно затоплено и почти лишено деталей — заметны лишь «кратеры-призраки»."},
+  f:{ru:"Верхнее звено знаменитой цепочки из трёх кратеров в самом центре диска. Дно затоплено и почти лишено деталей — заметны лишь «кратеры-призраки».",
+     en:"The top link of the famous chain of three craters at the very centre of the disc. Its floor is flooded and almost featureless — only ghost craters show."}},
  {n:"Alphonsus", ru:"Альфонс", lat:-13.4, lon:-2.8, dia:119, dep:2.7, v:1,
-  f:"Среднее звено цепочки. В 1958-м здесь наблюдали красноватое свечение — один из самых обсуждаемых случаев «краткосрочных лунных явлений». Сюда же упал «Рейнджер-9»."},
+  f:{ru:"Среднее звено цепочки. В 1958-м здесь наблюдали красноватое свечение — один из самых обсуждаемых случаев «краткосрочных лунных явлений». Сюда же упал «Рейнджер-9».",
+     en:"The middle link of the chain. In 1958 a reddish glow was observed here — one of the most debated transient lunar phenomena. Ranger 9 also came down here."}},
  {n:"Arzachel", ru:"Арзахель", lat:-18.2, lon:-1.9, dia:96, dep:3.6, v:1,
-  f:"Нижнее и самое молодое звено: стены ещё резкие, центральная горка целая. Втроём с Птолемеем и Альфонсом — идеальная демонстрация того, как кратеры стареют."},
+  f:{ru:"Нижнее и самое молодое звено: стены ещё резкие, центральная горка целая. Втроём с Птолемеем и Альфонсом — идеальная демонстрация того, как кратеры стареют.",
+     en:"The lowest and youngest link: walls still sharp, central peak intact. Together with Ptolemaeus and Alphonsus it is a perfect demonstration of how craters age."}},
  {n:"Theophilus", ru:"Теофил", lat:-11.4, lon:26.4, dia:100, dep:4.4, v:1, key:1,
-  f:"Самый глубокий из трёх у Моря Нектара — 4.4 км, и он врезался в соседний Кирилл, обрубив ему вал. Центральная горка — целый массив 30 км в поперечнике."},
+  f:{ru:"Самый глубокий из трёх у Моря Нектара — 4.4 км, и он врезался в соседний Кирилл, обрубив ему вал. Центральная горка — целый массив 30 км в поперечнике.",
+     en:"The deepest of the three by Mare Nectaris — 4.4 km — and it cut into neighbouring Cyrillus, shearing off its rim. Its central peak is a massif 30 km across."}},
  {n:"Cyrillus", ru:"Кирилл", lat:-13.2, lon:24, dia:98, v:1,
-  f:"Средний в «лестнице» Теофил–Кирилл–Екатерина. Разрушен сильнее соседей: по нему видно, кто пришёл раньше, а кто позже."},
+  f:{ru:"Средний в «лестнице» Теофил–Кирилл–Екатерина. Разрушен сильнее соседей: по нему видно, кто пришёл раньше, а кто позже.",
+     en:"The middle step of the Theophilus–Cyrillus–Catharina stair. More degraded than its neighbours: it shows plainly who arrived first and who came later."}},
  {n:"Catharina", ru:"Екатерина", lat:-18.1, lon:23.4, dia:104, v:1,
-  f:"Древнейший из трёх: вал изъеден позднейшими ударами, центральной горки нет вовсе. Возраст — свыше 3.9 млрд лет."},
+  f:{ru:"Древнейший из трёх: вал изъеден позднейшими ударами, центральной горки нет вовсе. Возраст — свыше 3.9 млрд лет.",
+     en:"The oldest of the three: its rim is eaten away by later impacts and it has no central peak at all. Over 3.9 billion years old."}},
  {n:"Petavius", ru:"Петавий", lat:-25.1, lon:60.4, dia:177, dep:3.3, v:1, key:1,
-  f:"Выпуклое дно, вздутое поднявшейся магмой, и рассёкший его рифт длиной 80 км. Ловите в первые дни после новолуния или у самого терминатора — иначе плоско."},
+  f:{ru:"Выпуклое дно, вздутое поднявшейся магмой, и рассёкший его рифт длиной 80 км. Ловите в первые дни после новолуния или у самого терминатора — иначе плоско.",
+     en:"A convex floor bulged up by rising magma, split by an 80 km rift. Catch it in the first days after new moon or right at the terminator — otherwise it looks flat."}},
  {n:"Langrenus", ru:"Лангрен", lat:-8.9, lon:61.1, dia:132, dep:2.7, v:1,
-  f:"Яркие террасы на восточном краю Моря Изобилия. При полной фазе выделяется светлым пятном — свежие выбросы ещё не потемнели от космического загара."},
+  f:{ru:"Яркие террасы на восточном краю Моря Изобилия. При полной фазе выделяется светлым пятном — свежие выбросы ещё не потемнели от космического загара.",
+     en:"Bright terraces on the eastern edge of Mare Fecunditatis. At full phase it stands out as a pale patch — its fresh ejecta have not yet darkened under space weathering."}},
  {n:"Cleomedes", ru:"Клеомед", lat:27.7, lon:55.5, dia:130, v:1,
-  f:"Крупный кратер прямо к северу от Моря Кризисов — удобный ориентир: сначала находите тёмный овал моря, затем поднимаетесь на один шаг вверх."},
+  f:{ru:"Крупный кратер прямо к северу от Моря Кризисов — удобный ориентир: сначала находите тёмный овал моря, затем поднимаетесь на один шаг вверх.",
+     en:"A large crater directly north of Mare Crisium and a handy waypoint: find the dark oval of the mare first, then step one notch up."}},
  {n:"Posidonius", ru:"Посидоний", lat:31.8, lon:29.9, dia:95, v:1, key:1,
-  f:"Затопленный лавой кратер на кромке Моря Ясности с редкой деталью — внутренним кольцом. По дну змеятся борозды, следы просевших лавовых каналов."},
+  f:{ru:"Затопленный лавой кратер на кромке Моря Ясности с редкой деталью — внутренним кольцом. По дну змеятся борозды, следы просевших лавовых каналов.",
+     en:"A lava-flooded crater on the rim of Mare Serenitatis with a rare feature — an inner ring. Rilles snake across its floor, the traces of collapsed lava channels."}},
  {n:"Aristoteles", ru:"Аристотель", lat:50.2, lon:17.4, dia:87, dep:3.3, v:1, key:1,
-  f:"Северная пара с Евдоксом — заметный дуэт на границе Моря Холода. Вал изборождён радиальными складками от собственного выброса."},
+  f:{ru:"Северная пара с Евдоксом — заметный дуэт на границе Моря Холода. Вал изборождён радиальными складками от собственного выброса.",
+     en:"Paired with Eudoxus in the north — a conspicuous duo on the border of Mare Frigoris. Its rim is furrowed by radial folds from its own ejecta."}},
  {n:"Eudoxus", ru:"Евдокс", lat:44.3, lon:16.3, dia:67, dep:3.4, v:1,
-  f:"Младший партнёр Аристотеля. Две почти одинаковые чаши рядом — хороший тест: если различаете обе, у вас спокойный воздух и твёрдые руки."},
+  f:{ru:"Младший партнёр Аристотеля. Две почти одинаковые чаши рядом — хороший тест: если различаете обе, у вас спокойный воздух и твёрдые руки.",
+     en:"Aristoteles' junior partner. Two nearly identical bowls side by side make a good test: if you can split them, you have steady air and steady hands."}},
  {n:"Atlas", ru:"Атлас", lat:46.7, lon:44.4, dia:87, dep:2.0, v:1, key:1,
-  f:"Пара с Гераклом у северо-восточного края. По дну — тёмные пятна пирокластики: здесь были вулканические выбросы уже после самого удара."},
+  f:{ru:"Пара с Гераклом у северо-восточного края. По дну — тёмные пятна пирокластики: здесь были вулканические выбросы уже после самого удара.",
+     en:"Paired with Hercules near the north-eastern limb. Dark pyroclastic patches mark its floor: volcanic eruptions happened here after the impact itself."}},
  {n:"Hercules", ru:"Геркулес", lat:46.7, lon:39.1, dia:69, dep:3.2, v:1,
-  f:"Сосед Атласа, с гладким лавовым дном и одним аккуратным свежим кратером посередине. Классическая «двойка» для бинокля."},
+  f:{ru:"Сосед Атласа, с гладким лавовым дном и одним аккуратным свежим кратером посередине. Классическая «двойка» для небольшого увеличения.",
+     en:"Atlas' neighbour, with a smooth lava floor and one neat fresh crater in the middle. A classic pair for low magnification."}},
  {n:"Archimedes", ru:"Архимед", lat:29.7, lon:-4, dia:83, v:1, key:1,
-  f:"Идеально ровное лавовое дно без центральной горки: кратер образовался раньше, чем Море Дождей залило лавой, и его просто затопило по края."},
+  f:{ru:"Идеально ровное лавовое дно без центральной горки: кратер образовался раньше, чем Море Дождей залило лавой, и его просто затопило по края.",
+     en:"A perfectly level lava floor with no central peak: the crater formed before Mare Imbrium flooded, and was simply filled to the brim."}},
  {n:"Kepler", ru:"Кеплер", lat:8.1, lon:-38, dia:32, dep:2.6, v:1,
-  f:"Маленький, но с мощным светлым нимбом выбросов посреди тёмного Океана Бурь — потому и виден. В полнолуние выглядит крупнее, чем есть."},
+  f:{ru:"Маленький, но с мощным светлым нимбом выбросов посреди тёмного Океана Бурь — потому и виден. В полнолуние выглядит крупнее, чем есть.",
+     en:"Small, but ringed by a strong bright halo of ejecta in the middle of the dark Oceanus Procellarum — which is why it shows. At full moon it looks larger than it is."}},
  {n:"Gassendi", ru:"Гассенди", lat:-17.6, lon:-40.1, dia:110, dep:1.9, v:1,
-  f:"Сидит на северной кромке Моря Влажности, как перстень на пальце, с крупным кратером-«подвеской» на валу. Дно исчерчено сетью трещин."},
+  f:{ru:"Сидит на северной кромке Моря Влажности, как перстень на пальце, с крупным кратером-«подвеской» на валу. Дно исчерчено сетью трещин.",
+     en:"Sits on the northern rim of Mare Humorum like a ring on a finger, with a large pendant crater on its wall. Its floor is scored with a network of fractures."}},
  {n:"Bullialdus", ru:"Буллиальд", lat:-20.7, lon:-22.2, dia:61, dep:3.5, v:1,
-  f:"Миниатюрный Коперник в центре Моря Облаков: те же террасы и та же горка, только в полтора раза меньше. Хорошая цель для проверки оптики."},
+  f:{ru:"Миниатюрный Коперник в центре Моря Облаков: те же террасы и та же горка, только в полтора раза меньше. Хорошая цель для проверки оптики.",
+     en:"A miniature Copernicus in the middle of Mare Nubium: the same terraces and the same peak, half again smaller. A good target for testing optics."}},
  {n:"Schickard", ru:"Шиккард", lat:-44.3, lon:-55.3, dia:212, v:1,
-  f:"Огромная древняя чаша у юго-западного края с необычным дном: тёмные полосы лавы чередуются со светлыми выбросами из бассейна Ориентале."},
+  f:{ru:"Огромная древняя чаша у юго-западного края с необычным дном: тёмные полосы лавы чередуются со светлыми выбросами из бассейна Ориентале.",
+     en:"A huge ancient bowl near the south-western limb with an unusual floor: dark lava bands alternate with pale ejecta from the Orientale basin."}},
  {n:"Maurolycus", ru:"Маролик", lat:-41.8, lon:14, dia:114, dep:4.7, v:1,
-  f:"В хаосе южных горных областей это самая крупная и глубокая деталь — 4.7 км. У терминатора её тень пересекает половину соседних кратеров."},
+  f:{ru:"В хаосе южных горных областей это самая крупная и глубокая деталь — 4.7 км. У терминатора её тень пересекает половину соседних кратеров.",
+     en:"In the chaos of the southern highlands this is the largest and deepest feature — 4.7 km. Near the terminator its shadow crosses half the neighbouring craters."}},
  {n:"Proclus", ru:"Прокл", lat:16.1, lon:46.8, dia:28, v:2,
-  f:"Крошечная, но пронзительно яркая точка на западном берегу Моря Кризисов. Лучи разлетаются веером только в одну сторону — удар был косым."},
+  f:{ru:"Крошечная, но пронзительно яркая точка на западном берегу Моря Кризисов. Лучи разлетаются веером только в одну сторону — удар был косым.",
+     en:"A tiny but piercingly bright point on the western shore of Mare Crisium. Its rays fan out to one side only — the impact was oblique."}},
  {n:"Manilius", ru:"Манилий", lat:14.5, lon:9.1, dia:39, dep:3.1, v:2,
-  f:"Яркая искра у Моря Паров, всего 39 км — примерно предел того, что 10× показывает как настоящий кружок, а не точку."},
+  f:{ru:"Яркая искра у Моря Паров, всего 39 км — примерно предел того, что малое увеличение показывает как настоящий кружок, а не точку.",
+     en:"A bright spark by Mare Vaporum, just 39 km — about the limit of what low magnification shows as a true disc rather than a point."}},
  {n:"Pythagoras", ru:"Пифагор", lat:63.5, lon:-63, dia:130, dep:5.0, v:2,
-  f:"Прижат к северо-западному краю и виден почти «с торца»: центральная горка высотой 3 км при низком солнце отбрасывает тень через весь кратер."},
+  f:{ru:"Прижат к северо-западному краю и виден почти «с торца»: центральная горка высотой 3 км при низком солнце отбрасывает тень через весь кратер.",
+     en:"Pressed against the north-western limb and seen almost edge-on: under a low sun its 3 km central peak throws a shadow right across the crater."}},
  {n:"Plinius", ru:"Плиний", lat:15.4, lon:23.7, dia:41, dep:2.3, v:2,
-  f:"Сидит на перемычке между Морем Спокойствия и Морем Ясности — удобная «пограничная застава» при обходе диска."},
+  f:{ru:"Сидит на перемычке между Морем Спокойствия и Морем Ясности — удобная «пограничная застава» при обходе диска.",
+     en:"Sits on the neck between Mare Tranquillitatis and Mare Serenitatis — a convenient border post when working around the disc."}},
  {n:"Fracastorius", ru:"Фракасторо", lat:-21.2, lon:33.2, dia:124, v:2,
-  f:"Кратер с вырезанной северной стенкой: Море Нектара прорвалось внутрь и превратило его в подкову."},
+  f:{ru:"Кратер с вырезанной северной стенкой: Море Нектара прорвалось внутрь и превратило его в подкову.",
+     en:"A crater with its northern wall cut away: Mare Nectaris broke in and turned it into a horseshoe."}},
  {n:"Piccolomini", ru:"Пикколомини", lat:-29.7, lon:32.2, dia:88, dep:4.5, v:2,
-  f:"Якорь южного конца Алтайского Уступа — 480-километрового обрыва, внешнего вала бассейна Нектара."},
+  f:{ru:"Якорь южного конца Алтайского Уступа — 480-километрового обрыва, внешнего вала бассейна Нектара.",
+     en:"The anchor at the southern end of the Altai Scarp — a 480 km cliff that forms the outer rim of the Nectaris basin."}},
  {n:"Stevinus", ru:"Стевин", lat:-32.5, lon:54.2, dia:74, dep:3.0, v:2,
-  f:"Вместе с соседним Фурнерием образует яркую пару на юго-востоке. Рядом крошечный кратер Стевин A с ослепительным нимбом."},
+  f:{ru:"Вместе с соседним Фурнерием образует яркую пару на юго-востоке. Рядом крошечный кратер Стевин A с ослепительным нимбом.",
+     en:"With neighbouring Furnerius it forms a bright pair in the south-east. Beside it sits tiny Stevinus A with its dazzling halo."}},
  {n:"Langrenus B", ru:"—", lat:-4.9, lon:59.8, dia:37, v:3, skipLabel:1,
-  f:"Спутник Лангрена; в бинокль не разделяется."},
+  f:{ru:"Спутник Лангрена; без серьёзного увеличения не разделяется.",
+     en:"A satellite of Langrenus; it needs serious magnification to split."}},
  {n:"Aristillus", ru:"Аристилл", lat:33.9, lon:1.2, dia:55, dep:3.6, v:2,
-  f:"Вместе с Автоликом и Архимедом — треугольник на востоке Моря Дождей. Заметен по светлому венчику выбросов."},
+  f:{ru:"Вместе с Автоликом и Архимедом — треугольник на востоке Моря Дождей. Заметен по светлому венчику выбросов.",
+     en:"With Autolycus and Archimedes it makes a triangle in the east of Mare Imbrium. Marked out by a pale collar of ejecta."}},
  {n:"Autolycus", ru:"Автолик", lat:30.7, lon:1.5, dia:39, dep:3.4, v:3,
-  f:"Меньший спутник Аристилла. Рядом, в 1959-м, разбилась «Луна-2» — первый рукотворный объект на Луне."},
+  f:{ru:"Меньший спутник Аристилла. Рядом, в 1959-м, разбилась «Луна-2» — первый рукотворный объект на Луне.",
+     en:"The smaller companion of Aristillus. Nearby, in 1959, Luna 2 crashed — the first man-made object to reach the Moon."}},
  {n:"Eratosthenes", ru:"Эратосфен", lat:14.5, lon:-11.3, dia:59, dep:3.6, v:2,
-  f:"Стоит на самом конце Апеннин и дал имя целой геологической эпохе — эратосфенской. Молодой вал, но лучей уже нет: они стёрлись."},
+  f:{ru:"Стоит на самом конце Апеннин и дал имя целой геологической эпохе — эратосфенской. Молодой вал, но лучей уже нет: они стёрлись.",
+     en:"Stands at the very end of the Apennines and gave its name to a whole geological epoch, the Eratosthenian. A young rim, but the rays are gone: they have faded."}},
  {n:"Timocharis", ru:"Тимохарис", lat:26.7, lon:-13.1, dia:34, dep:3.1, v:3,
-  f:"Одинокая яркая точка в середине Моря Дождей — полезный ориентир для оценки расстояний по морю."},
+  f:{ru:"Одинокая яркая точка в середине Моря Дождей — полезный ориентир для оценки расстояний по морю.",
+     en:"A lone bright point in the middle of Mare Imbrium — a useful marker for judging distances across the mare."}},
  {n:"Menelaus", ru:"Менелай", lat:16.3, lon:16, dia:27, dep:3.0, v:3,
-  f:"Крошечный, но один из самых ярких на Луне: свежие выбросы на тёмном базальте Моря Ясности."},
+  f:{ru:"Крошечный, но один из самых ярких на Луне: свежие выбросы на тёмном базальте Моря Ясности.",
+     en:"Tiny, but among the brightest on the Moon: fresh ejecta on the dark basalt of Mare Serenitatis."}},
  {n:"Censorinus", ru:"Цензорин", lat:-0.4, lon:32.7, dia:3.8, v:3, skipLabel:1,
-  f:"Всего 3.8 км, но одно из самых ярких пятнышек Луны — предел даже для крупных телескопов."}
+  f:{ru:"Всего 3.8 км, но одно из самых ярких пятнышек Луны — предел даже для крупных телескопов.",
+     en:"Just 3.8 km, yet one of the brightest specks on the Moon — a limit even for large telescopes."}}
 ];
 
 const RANGES = [
- {n:"Montes Apenninus", ru:"Апеннины", d:"path", p:"M 522 292 Q 480 348 428 404",
+ {n:"Montes Apenninus", ru:"Апеннины", en:"Apenninus", d:"path", p:"M 522 292 Q 480 348 428 404",
   lat:18.9, lon:-3.7, dia:600, h:5.5, v:1, key:1, lx:560, ly:330,
-  f:"Главный вал Моря Дождей: 600 км дуги, вершины до 5.5 км (Mons Huygens — высшая точка Луны над окружающей местностью). У терминатора цепь выглядит как зубчатая пила."},
- {n:"Montes Alpes", ru:"Альпы", d:"path", p:"M 438 208 Q 478 176 516 158",
+  f:{ru:"Главный вал Моря Дождей: 600 км дуги, вершины до 5.5 км (Mons Huygens — высшая точка Луны над окружающей местностью). У терминатора цепь выглядит как зубчатая пила.",
+     en:"The main rim of Mare Imbrium: a 600 km arc with peaks to 5.5 km (Mons Huygens, the Moon's highest point above its surroundings). At the terminator the chain looks like a toothed saw."}},
+ {n:"Montes Alpes", ru:"Альпы", en:"Alpes", d:"path", p:"M 438 208 Q 478 176 516 158",
   lat:46.4, lon:0.8, dia:281, h:3.6, v:1, lx:412, ly:196,
-  f:"Северо-восточный борт Моря Дождей. Его рассекает Альпийская Долина — прямой жёлоб 166 км длиной и 10 км шириной, грабен, провалившийся между двумя разломами."},
- {n:"Montes Caucasus", ru:"Кавказ", d:"path", p:"M 552 250 Q 570 218 580 182",
+  f:{ru:"Северо-восточный борт Моря Дождей. Его рассекает Альпийская Долина — прямой жёлоб 166 км длиной и 10 км шириной, грабен, провалившийся между двумя разломами.",
+     en:"The north-eastern flank of Mare Imbrium, cut through by the Alpine Valley — a straight trough 166 km long and 10 km wide, a graben dropped between two faults."}},
+ {n:"Montes Caucasus", ru:"Кавказ", en:"Caucasus", d:"path", p:"M 552 250 Q 570 218 580 182",
   lat:38.4, lon:10, dia:445, h:6.0, v:2, lx:606, ly:228,
-  f:"Перегородка между Морем Дождей и Морем Ясности — остаток вала, который лава так и не смогла перелить."},
- {n:"Montes Jura", ru:"Юра", d:"path", p:"M 288 206 Q 294 142 352 146",
+  f:{ru:"Перегородка между Морем Дождей и Морем Ясности — остаток вала, который лава так и не смогла перелить.",
+     en:"The partition between Mare Imbrium and Mare Serenitatis — the remnant of a rim the lava never managed to breach."}},
+ {n:"Montes Jura", ru:"Юра", en:"Jura", d:"path", p:"M 288 206 Q 294 142 352 146",
   lat:47, lon:-34, dia:422, h:6.0, v:2, lx:268, ly:236,
-  f:"Дуга, обнимающая Залив Радуги. Мыс Лапласа на её конце — обрыв высотой 3 км, обрывающийся прямо в лаву."},
- {n:"Montes Carpatus", ru:"Карпаты", d:"path", p:"M 286 372 Q 326 364 366 370",
+  f:{ru:"Дуга, обнимающая Залив Радуги. Мыс Лапласа на её конце — обрыв высотой 3 км, обрывающийся прямо в лаву.",
+     en:"The arc embracing Sinus Iridum. Promontorium Laplace at its end is a 3 km cliff dropping straight into the lava."}},
+ {n:"Montes Carpatus", ru:"Карпаты", en:"Carpatus", d:"path", p:"M 286 372 Q 326 364 366 370",
   lat:14.5, lon:-24.4, dia:361, h:2.0, v:2, lx:300, ly:398,
-  f:"Южная стенка Моря Дождей, к северу от Коперника — самая низкая из ободных цепей: лава почти похоронила её."},
- {n:"Rupes Recta", ru:"Прямая Стена", d:"line", x1:441, y1:657, x2:445, y2:689,
+  f:{ru:"Южная стенка Моря Дождей, к северу от Коперника — самая низкая из ободных цепей: лава почти похоронила её.",
+     en:"The southern wall of Mare Imbrium, north of Copernicus — the lowest of the rim chains: the lava has all but buried it."}},
+ {n:"Rupes Recta", ru:"Прямая Стена", en:"Rupes Recta", d:"line", x1:441, y1:657, x2:445, y2:689,
   lat:-22.1, lon:-7.8, dia:110, h:0.3, v:3, lx:478, ly:676,
-  f:"Не стена, а разлом: 110 км идеально прямого уступа высотой всего 240–300 м с уклоном ~7°. Тень делает его чёрной чертой на 2–3 дня после первой четверти."},
- {n:"Vallis Alpes", ru:"Альпийская Долина", d:"line", x1:504, y1:176, x2:532, y2:139,
+  f:{ru:"Не стена, а разлом: 110 км идеально прямого уступа высотой всего 240–300 м с уклоном ~7°. Тень делает его чёрной чертой на 2–3 дня после первой четверти.",
+     en:"Not a wall but a fault: 110 km of perfectly straight scarp only 240–300 m high, sloping about 7°. Shadow turns it into a black line for two or three days after first quarter."}},
+ {n:"Vallis Alpes", ru:"Альпийская Долина", en:"Vallis Alpes", d:"line", x1:504, y1:176, x2:532, y2:139,
   lat:48.5, lon:3.2, dia:166, v:3, lx:556, ly:154,
-  f:"Единственный лунный грабен, который видно в средний телескоп: рассекает Альпы насквозь, а по его дну тянется тонкий извилистый канал."}
+  f:{ru:"Единственный лунный грабен, который видно в средний телескоп: рассекает Альпы насквозь, а по его дну тянется тонкий извилистый канал.",
+     en:"The only lunar graben visible in a medium telescope: it cuts clean through the Alps, and a thin sinuous channel runs along its floor."}}
 ];
 
 const SITES = [
  {n:"Apollo 11", lat:0.67, lon:23.47}, {n:"Apollo 15", lat:26.13, lon:3.63},
- {n:"Apollo 17", lat:20.19, lon:30.77}, {n:"Луна-9", lat:7.08, lon:-64.37},
- {n:"Луноход-1", lat:38.28, lon:-35.0}, {n:"Луноход-2", lat:25.85, lon:30.45},
- {n:"Луна-16", lat:-0.68, lon:56.3}, {n:"Луна-24", lat:12.25, lon:62.2},
+ {n:"Apollo 17", lat:20.19, lon:30.77}, {n:"Луна-9", en:"Luna 9", lat:7.08, lon:-64.37},
+ {n:"Луноход-1", en:"Lunokhod 1", lat:38.28, lon:-35.0},
+ {n:"Луноход-2", en:"Lunokhod 2", lat:25.85, lon:30.45},
+ {n:"Луна-16", en:"Luna 16", lat:-0.68, lon:56.3},
+ {n:"Луна-24", en:"Luna 24", lat:12.25, lon:62.2},
  {n:"Chang'e-3", lat:44.12, lon:-19.51}
 ];
 
-/* ---------- фаза Луны на текущий момент ----------
-   Усечённые ряды ELP2000/VSOP87 (Meeus, гл. 25 и 47): эклиптические долготы
-   Луны и Солнца с ошибкой < 0.1°. Ведущая величина — элонгация E:
-   E = 0° новолуние, 180° полнолуние. Терминатор и освещённость выводятся
-   из неё напрямую, а «возраст в сутках» — лишь удобная единица для ползунка. */
+/* ---------- lunar phase for the current moment ----------
+   Truncated ELP2000/VSOP87 series (Meeus, ch. 25 and 47): ecliptic longitudes
+   of Moon and Sun to better than 0.1°. The driving quantity is the elongation
+   E: 0° new moon, 180° full moon. Terminator and illumination follow from it;
+   "age in days" is merely a convenient unit for the slider. */
 const SYN = 29.530588853;
 function julianDay(d){ return d.getTime() / 86400000 + 2440587.5; }
 function nrm360(x){ return ((x % 360) + 360) % 360; }
@@ -500,11 +718,96 @@ function elongation(date){
 }
 const NOW = new Date();
 const TODAY_AGE = elongation(NOW) / 360 * SYN;
-const MONTHS = ["января","февраля","марта","апреля","мая","июня",
-                "июля","августа","сентября","октября","ноября","декабря"];
+
+/* ---------- where the Moon hangs in the sky ----------
+   Geocentric ecliptic longitude/latitude of the Moon (Meeus ch. 47, truncated)
+   -> equatorial RA/Dec -> local hour angle -> altitude, azimuth and the
+   parallactic angle q, the tilt between celestial north and the zenith.
+   Rotating the chart by -q shows the disc as it actually stands over you.   */
+function moonEcliptic(date){
+  const T = (julianDay(date) - 2451545.0) / 36525, r = D2R;
+  const Lm = 218.3164477 + 481267.88123421*T - 0.0015786*T*T;
+  const D  = 297.8501921 + 445267.1114034*T  - 0.0018819*T*T;
+  const Ms = 357.52911 + 35999.05029*T - 0.0001537*T*T;
+  const Mm = 134.9633964 + 477198.8675055*T  + 0.0087414*T*T;
+  const F  = 93.2720950  + 483202.0175233*T  - 0.0036539*T*T;
+  const dL = 6.288774*Math.sin(Mm*r) + 1.274027*Math.sin((2*D-Mm)*r)
+    + 0.658314*Math.sin(2*D*r)       + 0.213618*Math.sin(2*Mm*r)
+    - 0.185116*Math.sin(Ms*r)        - 0.114332*Math.sin(2*F*r)
+    + 0.058793*Math.sin((2*D-2*Mm)*r)+ 0.057066*Math.sin((2*D-Ms-Mm)*r)
+    + 0.053322*Math.sin((2*D+Mm)*r)  + 0.045758*Math.sin((2*D-Ms)*r)
+    - 0.040923*Math.sin((Ms-Mm)*r)   - 0.034720*Math.sin(D*r);
+  const B = 5.128122*Math.sin(F*r)        + 0.280602*Math.sin((Mm+F)*r)
+    + 0.277693*Math.sin((Mm-F)*r)         + 0.173237*Math.sin((2*D-F)*r)
+    + 0.055413*Math.sin((2*D-Mm+F)*r)     + 0.046271*Math.sin((2*D-Mm-F)*r)
+    + 0.032573*Math.sin((2*D+F)*r)        + 0.017198*Math.sin((2*Mm+F)*r)
+    + 0.009266*Math.sin((2*D+Mm-F)*r)     + 0.008822*Math.sin((2*Mm-F)*r)
+    + 0.008216*Math.sin((2*D-Ms-F)*r)     + 0.004324*Math.sin((2*D-2*Mm-F)*r);
+  return {lam:nrm360(Lm + dL), bet:B, T};
+}
+function moonEquatorial(date){
+  const {lam, bet, T} = moonEcliptic(date), r = D2R;
+  const eps = (23.439291 - 0.0130042*T) * r;
+  const l = lam * r, b = bet * r;
+  const ra = Math.atan2(Math.sin(l)*Math.cos(eps) - Math.tan(b)*Math.sin(eps), Math.cos(l));
+  const dec = Math.asin(Math.sin(b)*Math.cos(eps) + Math.cos(b)*Math.sin(eps)*Math.sin(l));
+  return {ra:nrm360(ra / r), dec:dec / r};
+}
+function gmstDeg(date){
+  const jd = julianDay(date), T = (jd - 2451545.0) / 36525;
+  return nrm360(280.46061837 + 360.98564736629*(jd - 2451545.0)
+    + 0.000387933*T*T - T*T*T/38710000);
+}
+function skyView(date, lat, lon){
+  const r = D2R;
+  const {ra, dec} = moonEquatorial(date);
+  const H = nrm360(gmstDeg(date) + lon - ra) * r;   /* local hour angle */
+  const phi = lat * r, d = dec * r;
+  const alt = Math.asin(Math.sin(phi)*Math.sin(d) + Math.cos(phi)*Math.cos(d)*Math.cos(H));
+  const az = nrm360(Math.atan2(Math.sin(H), Math.cos(H)*Math.sin(phi) - Math.tan(d)*Math.cos(phi)) / r + 180);
+  const q = Math.atan2(Math.sin(H), Math.tan(phi)*Math.cos(d) - Math.sin(d)*Math.cos(H));
+  return {alt:alt / r, az, q:q / r};
+}
+
+/* ---------- language ---------- */
+const LANGS = ["ru","en"];
+const LS_KEY = "moon-atlas-lang";
+const LS_MAG = "moon-atlas-mag";
+const LS_GEO = "moon-atlas-geo";
+const HOME = {lat:42.29, lon:18.84, named:false};
+function pickLang(){
+  const q = new URLSearchParams(location.search).get("lang");
+  if(LANGS.includes(q)) return q;
+  let saved = null;
+  try{ saved = localStorage.getItem(LS_KEY); }catch(e){}
+  if(LANGS.includes(saved)) return saved;
+  return (navigator.language || "en").toLowerCase().startsWith("ru") ? "ru" : "en";
+}
+
+function pickMag(){
+  const q = parseFloat(new URLSearchParams(location.search).get("mag"));
+  if(q >= 2 && q <= 400) return Math.round(q);
+  let saved = NaN;
+  try{ saved = parseFloat(localStorage.getItem(LS_MAG)); }catch(e){}
+  return (saved >= 2 && saved <= 400) ? Math.round(saved) : 10;
+}
+
+function pickGeo(){
+  try{
+    const g = JSON.parse(localStorage.getItem(LS_GEO) || "null");
+    if(g && isFinite(g.lat) && isFinite(g.lon)) return {lat:g.lat, lon:g.lon, named:true};
+  }catch(e){}
+  return {...HOME};
+}
 
 /* ---------- state ---------- */
-const S = {age:TODAY_AGE, shadow:true, allNames:false, binoOnly:false, sites:false, sel:null};
+const S = {age:TODAY_AGE, shadow:true, allNames:false, binoOnly:false, sites:false,
+           sel:null, lang:pickLang(), mag:pickMag(), geo:pickGeo(), sky:false};
+
+/* the slider walks the synodic cycle; the sky is computed for the moment it lands on */
+const skyDate = () => new Date(NOW.getTime() + (S.age - TODAY_AGE) * 86400000);
+const sky = () => skyView(skyDate(), S.geo.lat, S.geo.lon);
+const T = () => I18N[S.lang];
 const $ = id => document.getElementById(id);
 const SVGNS = "http://www.w3.org/2000/svg";
 function el(tag, attrs){
@@ -512,9 +815,34 @@ function el(tag, attrs){
   for(const k in attrs) e.setAttribute(k, attrs[k]);
   return e;
 }
-const VIS = {1:"уверенно", 2:"на пределе", 3:"нужен телескоп"};
-const ru = n => String(n).replace(".", ",");
-const dkm = d => d >= 1000 ? ru((Math.round(d/10)/100).toFixed(2)) + " тыс. км" : ru(d) + " км";
+
+/* ---------- optics ----------
+   Each feature carries v: 1 = easy at 10×, 2 = at the limit of 10×, 3 = telescope.
+   That translates into a required magnification; everything the reader sees about
+   visibility is derived from it and from the magnification they entered.        */
+const REQ = {1:10, 2:15, 3:30};
+const MIN = {1:6, 2:9, 3:18};
+const detailKm = () => Math.max(1, Math.round(200 / S.mag));
+const reachable = o => S.mag >= MIN[o.v];
+function visLabel(o){
+  const L = T();
+  if(S.mag >= REQ[o.v]) return L.vis[1];
+  if(S.mag >= MIN[o.v]) return L.vis[2];
+  return L.visNo(MIN[o.v]);
+}
+
+/* ---------- localised formatting & naming ---------- */
+const num = n => S.lang === "ru" ? String(n).replace(".", ",") : String(n);
+const dkm = d => S.lang === "ru"
+  ? (d >= 1000 ? num((Math.round(d/10)/100).toFixed(2)) + " тыс. км" : num(d) + " км")
+  : (d >= 1000 ? d.toLocaleString("en-US") + " km" : d + " km");
+const dkmShort = d => S.lang === "ru" ? dkm(d).replace(" тыс. км", " тыс.") : dkm(d);
+/* display name: Russian equivalent in RU, Latin name in EN */
+const name = o => S.lang === "ru" ? (o.ru && o.ru !== "—" ? o.ru : o.n) : o.n;
+const fact = o => (o.f && o.f[S.lang]) || "";
+const dateline = () => S.lang === "ru"
+  ? NOW.getDate() + " " + MONTHS.ru[NOW.getMonth()] + " " + NOW.getFullYear()
+  : MONTHS.en[NOW.getMonth()] + " " + NOW.getDate() + ", " + NOW.getFullYear();
 
 /* ---------- static layers ---------- */
 function drawGrid(){
@@ -589,7 +917,7 @@ function drawRanges(){
     g.appendChild(node);
 
     const t = el("text",{x:m.lx, y:m.ly, class:"c-label", "font-size":13, opacity:.85});
-    t.textContent = m.ru;
+    t.textContent = S.lang === "ru" ? m.ru : m.en;
     t.setAttribute("data-lbl-range", i);
     L.appendChild(t);
 
@@ -640,7 +968,7 @@ function drawSites(){
       stroke:"#2E5A4E", "stroke-width":1.8}));
     const t = el("text",{x:p.x, y:p.y - 10, class:"c-label", "font-size":11,
       style:"fill:#20493D"});
-    t.textContent = s.n;
+    t.textContent = S.lang === "en" && s.en ? s.en : s.n;
     g.appendChild(t);
   });
 }
@@ -649,19 +977,27 @@ function drawFrame(){
   const g = $("frame");
   g.appendChild(el("circle",{cx:CX, cy:CY, r:R, fill:"none",
     stroke:"rgba(169,138,75,.5)", "stroke-width":1.2}));
-  const marks = [["С",500,32],["Ю",500,982],["В",968,506],["З",32,506]];
+  const c = T().compass;
+  const marks = [[c[0],500,32],[c[1],500,982],[c[2],968,506],[c[3],32,506]];
   marks.forEach(([s,x,y]) => {
     const t = el("text",{x, y, "font-family":"ui-monospace,monospace", "font-size":15,
       fill:"#A98A4B", "text-anchor":"middle", opacity:.8});
     t.textContent = s; g.appendChild(t);
   });
   const bar = 500 * KM;
-  g.appendChild(el("line",{x1:60, y1:940, x2:60+bar, y2:940, stroke:"#A98A4B", "stroke-width":2}));
-  g.appendChild(el("line",{x1:60, y1:934, x2:60, y2:946, stroke:"#A98A4B", "stroke-width":2}));
-  g.appendChild(el("line",{x1:60+bar, y1:934, x2:60+bar, y2:946, stroke:"#A98A4B", "stroke-width":2}));
+  const g2 = $("scale");
+  g2.appendChild(el("line",{x1:60, y1:940, x2:60+bar, y2:940, stroke:"#A98A4B", "stroke-width":2}));
+  g2.appendChild(el("line",{x1:60, y1:934, x2:60, y2:946, stroke:"#A98A4B", "stroke-width":2}));
+  g2.appendChild(el("line",{x1:60+bar, y1:934, x2:60+bar, y2:946, stroke:"#A98A4B", "stroke-width":2}));
   const t = el("text",{x:60, y:928, "font-family":"ui-monospace,monospace", "font-size":13,
     fill:"#A98A4B"});
-  t.textContent = "500 км"; g.appendChild(t);
+  t.textContent = T().bar; g2.appendChild(t);
+}
+
+/* rotate the whole disc by the parallactic angle: zenith up instead of north up */
+function applySky(){
+  const q = S.sky ? sky().q : 0;
+  $("sky").setAttribute("transform", `rotate(${(-q).toFixed(2)},${CX},${CY})`);
 }
 
 /* ---------- terminator ---------- */
@@ -684,8 +1020,8 @@ function drawShadow(){
   const d = `M ${CX} ${CY-R} A ${R} ${R} 0 0 ${shadowLeft?0:1} ${CX} ${CY+R}` +
             ` A ${rx.toFixed(2)} ${R} 0 0 ${bulgeRight?0:1} ${CX} ${CY-R} Z`;
   g.appendChild(el("path",{d, fill:"#05070B", opacity:.87}));
-  /* warm glow along the terminator */
-  /* внимание: этот путь идёт T->B, обратно arc2 выше, поэтому sweep-flag зеркальный */
+  /* warm glow along the terminator.
+     note: this path runs T->B, the reverse of arc2 above, so the sweep flag mirrors */
   const t = `M ${CX} ${CY-R} A ${rx.toFixed(2)} ${R} 0 0 ${bulgeRight?1:0} ${CX} ${CY+R}`;
   b.appendChild(el("path",{d:t, fill:"none", stroke:"#DDA24A", "stroke-width":10,
     opacity:.16, filter:"url(#soft)"}));
@@ -701,7 +1037,7 @@ function tonightPicks(){
     ...RANGES.map((r,i) => ({...r, t:"range", i}))
   ];
   return all
-    .filter(o => o.v <= 2 && !o.skipLabel && isLit(o.lon))
+    .filter(o => reachable(o) && !o.skipLabel && isLit(o.lon))
     .map(o => ({o, dl:Math.abs(normLon(o.lon - tl))}))
     .filter(x => x.dl < 18)
     .sort((a,b) => a.dl - b.dl)
@@ -713,11 +1049,11 @@ function tonightPicks(){
 function applyVisibility(){
   document.querySelectorAll("[data-crater]").forEach(n => {
     const c = CRATERS[+n.dataset.crater];
-    n.style.display = (S.binoOnly && c.v === 3) ? "none" : "";
+    n.style.display = (S.binoOnly && !reachable(c)) ? "none" : "";
   });
   document.querySelectorAll("[data-lbl-crater]").forEach(n => {
     const i = +n.getAttribute("data-lbl-crater"), c = CRATERS[i];
-    const hideByBino = S.binoOnly && c.v === 3;
+    const hideByBino = S.binoOnly && !reachable(c);
     const show = !hideByBino && (S.allNames || c.key || S.sel === "crater:" + i);
     n.style.display = show ? "" : "none";
     n.style.fill = S.sel === "crater:" + i ? "#8A4B0A" : "";
@@ -725,7 +1061,7 @@ function applyVisibility(){
   });
   document.querySelectorAll("[data-lbl-range]").forEach(n => {
     const i = +n.getAttribute("data-lbl-range"), m = RANGES[i];
-    const hideByBino = S.binoOnly && m.v === 3;
+    const hideByBino = S.binoOnly && !reachable(m);
     const show = !hideByBino && (S.allNames || m.key || S.sel === "range:" + i);
     n.style.display = show ? "" : "none";
     n.style.fill = S.sel === "range:" + i ? "#8A4B0A" : "";
@@ -733,7 +1069,7 @@ function applyVisibility(){
   });
   document.querySelectorAll("[data-range]").forEach(n => {
     const m = RANGES[+n.dataset.range];
-    n.style.display = (S.binoOnly && m.v === 3) ? "none" : "";
+    n.style.display = (S.binoOnly && !reachable(m)) ? "none" : "";
   });
   $("sites").style.display = S.sites ? "" : "none";
   /* selection ring */
@@ -753,41 +1089,46 @@ function applyVisibility(){
 }
 
 function renderReadout(){
-  const age = S.age;
+  const age = S.age, t = T();
   const illum = Math.round((1 - Math.cos(2*Math.PI*age/29.53)) / 2 * 100);
-  let name;
-  if(age < 1 || age > 28.6) name = "новолуние";
-  else if(age < 6.4) name = "молодой серп";
-  else if(age < 8.4) name = "первая четверть";
-  else if(age < 13.8) name = "растущая горбатая";
-  else if(age < 15.8) name = "полнолуние";
-  else if(age < 21.1) name = "убывающая горбатая";
-  else if(age < 23.1) name = "последняя четверть";
-  else name = "старый серп";
-  $("r-phase").textContent = name;
+  const P = t.phases;
+  let nm;
+  if(age < 1 || age > 28.6) nm = P[0];
+  else if(age < 6.4) nm = P[1];
+  else if(age < 8.4) nm = P[2];
+  else if(age < 13.8) nm = P[3];
+  else if(age < 15.8) nm = P[4];
+  else if(age < 21.1) nm = P[5];
+  else if(age < 23.1) nm = P[6];
+  else nm = P[7];
+  $("r-phase").textContent = nm;
   $("r-illum").textContent = illum + "%";
   const tl = normLon(termLongitude(age));
-  $("r-term").textContent = Math.abs(Math.round(tl)) + "° " + (tl >= 0 ? "в.д." : "з.д.");
-  $("ageOut").textContent = age.toFixed(1) + " сут";
+  $("r-term").textContent = Math.abs(Math.round(tl)) + "° " + (tl >= 0 ? t.termE : t.termW);
+  $("ageOut").textContent = t.days(num(age.toFixed(1)));
+  const v = sky();
+  $("r-alt").innerHTML = v.alt >= 0
+    ? t.altUp(Math.round(v.alt), t.dirs[Math.round(nrm360(v.az) / 45) % 8])
+    : t.altDown(Math.round(-v.alt));
+  $("r-tilt").textContent = t.tilt(Math.round(v.q));
 }
 
 function renderTonight(){
-  const list = $("tonightList");
+  const list = $("tonightList"), t = T();
   list.textContent = "";
   const picks = tonightPicks();
   if(!picks.length){
     const p = document.createElement("p");
     p.className = "empty";
-    p.textContent = S.age < 1.2 || S.age > 28.4
-      ? "Новолуние: диск не освещён — смотреть нечего."
-      : "У терминатора сейчас нет крупных объектов из каталога. Попробуйте сдвинуть дату на день-два.";
+    p.textContent = S.mag < 6 ? t.emptyMag(S.mag)
+      : (S.age < 1.2 || S.age > 28.4) ? t.emptyNew : t.emptyNone;
     list.appendChild(p);
     return;
   }
   picks.forEach(o => {
     const li = document.createElement("li");
     const b = document.createElement("button");
-    b.className = "nm"; b.textContent = o.ru && o.ru !== "—" ? o.ru : o.n;
+    b.className = "nm"; b.textContent = name(o);
     b.addEventListener("click", () => select(o.t, o.i));
     const s = document.createElement("span");
     s.className = "dim"; s.textContent = dkm(o.dia);
@@ -805,38 +1146,41 @@ function isLit(lon){
 
 function select(t, i){
   S.sel = t + ":" + i;
+  const L = T();
   const o = t === "mare" ? MARIA[i] : t === "crater" ? CRATERS[i] : RANGES[i];
-  $("c-kind").textContent = t === "mare" ? "Море · лавовая равнина"
-    : t === "crater" ? "Ударный кратер" : "Горы и разломы";
+  $("c-kind").textContent = t === "mare" ? L.kindMare
+    : t === "crater" ? L.kindCrater : L.kindRange;
   $("c-name").textContent = o.n;
-  $("c-ru").textContent = o.ru && o.ru !== "—" ? o.ru : "—";
+  $("c-ru").textContent = o.ru && o.ru !== "—" ? o.ru : L.dash;
   $("c-d").textContent = dkm(o.dia);
-  $("c-h").textContent = o.dep ? ru(o.dep) + " км глубина" : o.h ? "до " + ru(o.h) + " км" : "—";
-  $("c-co").textContent = ru(Math.abs(o.lat).toFixed(1)) + "° " + (o.lat >= 0 ? "с" : "ю") +
-    " · " + ru(Math.abs(o.lon).toFixed(1)) + "° " + (o.lon >= 0 ? "в" : "з");
-  $("c-v").textContent = VIS[o.v];
-  $("c-fact").textContent = o.f;
+  $("c-h").textContent = o.dep ? L.deep(num(o.dep)) : o.h ? L.high(num(o.h)) : L.dash;
+  $("c-co").textContent = num(Math.abs(o.lat).toFixed(1)) + "° " + (o.lat >= 0 ? L.latN : L.latS) +
+    " · " + num(Math.abs(o.lon).toFixed(1)) + "° " + (o.lon >= 0 ? L.lonE : L.lonW);
+  $("c-v").textContent = visLabel(o);
+  $("c-fact").textContent = fact(o);
   const tl = normLon(termLongitude(S.age));
   const dl = Math.abs(normLon(o.lon - tl));
   let verdict;
-  if(!S.shadow) verdict = "Тень снята — карта показана как в полнолуние.";
-  else if(!isLit(o.lon)) verdict = "Сейчас в ночной тени: подождите " +
-    Math.max(1, Math.round(dl / 12.2)) + " сут или снимите тень.";
-  else if(dl < 10) verdict = "У самого терминатора: рельеф в максимальном контрасте — смотрите сегодня.";
-  else if(dl < 25) verdict = "Тени ещё длинные, деталь читается хорошо.";
-  else verdict = "Солнце стоит высоко: видно как пятно по яркости, без рельефа.";
+  if(!S.shadow) verdict = L.vShadowOff;
+  else if(!isLit(o.lon)) verdict = L.vDark(Math.max(1, Math.round(dl / 12.2)));
+  else if(dl < 10) verdict = L.vTerm;
+  else if(dl < 25) verdict = L.vGood;
+  else verdict = L.vFlat;
   $("c-now").textContent = verdict;
   applyVisibility();
 }
 
 function buildCatalogue(){
-  const wrap = $("cat");
-  $("catCount").textContent = MARIA.length + CRATERS.length + RANGES.length;
+  const wrap = $("cat"), L = T();
+  wrap.textContent = "";
+  const total = MARIA.length + CRATERS.length + RANGES.length;
+  $("catTitle").textContent = L.catTitle(total);
+  $("catNote").textContent = L.catNote;
   const groups = [
-    ["Моря и океаны", MARIA.map((m,i)=>({o:m,t:"mare",i}))],
-    ["Крупные кратеры (>90 км)", CRATERS.map((c,i)=>({o:c,t:"crater",i})).filter(x=>x.o.dia>=90)],
-    ["Средние и малые кратеры", CRATERS.map((c,i)=>({o:c,t:"crater",i})).filter(x=>x.o.dia<90 && !x.o.skipLabel)],
-    ["Горы, долины, разломы", RANGES.map((m,i)=>({o:m,t:"range",i}))]
+    [L.groups[0], MARIA.map((m,i)=>({o:m,t:"mare",i}))],
+    [L.groups[1], CRATERS.map((c,i)=>({o:c,t:"crater",i})).filter(x=>x.o.dia>=90)],
+    [L.groups[2], CRATERS.map((c,i)=>({o:c,t:"crater",i})).filter(x=>x.o.dia<90 && !x.o.skipLabel)],
+    [L.groups[3], RANGES.map((m,i)=>({o:m,t:"range",i}))]
   ];
   groups.forEach(([title, items]) => {
     const col = document.createElement("div"); col.className = "col";
@@ -846,14 +1190,15 @@ function buildCatalogue(){
       const li = document.createElement("li");
       const b = document.createElement("button");
       const nm = document.createElement("span");
-      nm.textContent = o.ru && o.ru !== "—" ? o.ru : o.n;
+      nm.textContent = name(o);
       const n = document.createElement("span");
       n.className = "n";
-      n.textContent = dkm(o.dia).replace(" тыс. км", " тыс.");
+      n.textContent = dkmShort(o.dia);
       b.append(nm, n);
       b.addEventListener("click", () => {
         select(t, i);
-        document.querySelector(".stage").scrollIntoView({behavior:"smooth", block:"start"});
+        const box = document.querySelector(".stage").getBoundingClientRect();
+        window.scrollTo({top: box.top + window.scrollY - 20, behavior:"smooth"});
       });
       li.appendChild(b); ul.appendChild(li);
     });
@@ -861,39 +1206,163 @@ function buildCatalogue(){
   });
 }
 
+/* ---------- chrome: everything outside the chart ---------- */
+const placeLabel = () => S.geo.named
+  ? T().coords(S.geo.lat, S.geo.lon)
+  : T().home + " · " + T().coords(HOME.lat, HOME.lon);
+
+function renderChrome(){
+  const t = T();
+  document.documentElement.lang = t.htmlLang;
+  document.title = t.title;
+  $("m-desc").content = t.metaDesc;
+  $("m-og-site").content = t.title;
+  $("m-og-locale").content = t.ogLocale;
+  $("m-og-title").content = t.title;
+  $("m-og-desc").content = t.ogDesc;
+  $("m-og-alt").content = t.svgAlt;
+  $("m-tw-title").content = t.title;
+  $("m-tw-desc").content = t.twDesc;
+  $("moon").setAttribute("aria-label", t.svgAlt);
+
+  $("eyebrow").innerHTML = t.eyebrow(dateline(), S.mag, placeLabel());
+  $("h1").innerHTML = t.h1;
+  $("lede").textContent = t.lede;
+  $("k-phase").textContent = t.kPhase;
+  $("k-illum").textContent = t.kIllum;
+  $("k-term").textContent = t.kTerm;
+  $("k-limit").textContent = t.kLimit(S.mag);
+  $("r-limit").innerHTML = t.limit(detailKm());
+  $("k-alt").textContent = t.kAlt;
+  $("k-tilt").textContent = t.kTilt;
+  $("k-place").textContent = t.kPlace;
+  $("placeVal").textContent = t.coords(S.geo.lat, S.geo.lon);
+  $("geo").textContent = t.geoBtn;
+  $("t-sky").textContent = t.tSky;
+  $("k-scale").textContent = t.kScale;
+  $("r-scale").textContent = t.scale;
+  $("hint").textContent = t.hint;
+  $("k-age").textContent = t.kAge;
+  $("k-mag").textContent = t.kMag;
+  $("mag").title = t.magTitle;
+  $("mag").value = String(S.mag);
+  $("t-today").textContent = t.tToday;
+  $("t-full").textContent = S.shadow ? t.tShadowOff : t.tShadowOn;
+  $("t-names").textContent = t.tNames;
+  $("t-bino").textContent = t.tBino(S.mag);
+  $("t-sites").textContent = t.tSites;
+  $("k-dia").textContent = t.kDia;
+  $("k-dep").textContent = t.kDep;
+  $("k-co").textContent = t.kCo;
+  $("k-vis").textContent = t.kVis(S.mag);
+  $("tonightTitle").textContent = t.tonightTitle;
+  $("tonightSub").textContent = t.tonightSub;
+
+  const f = $("footer"); f.textContent = "";
+  t.footer.forEach(s => { const sp = document.createElement("span"); sp.textContent = s; f.appendChild(sp); });
+
+  $("langs").querySelectorAll("button").forEach(b =>
+    b.setAttribute("aria-pressed", String(b.dataset.lang === S.lang)));
+}
+
+/* ---------- chart: everything language-dependent inside the SVG ---------- */
+function paintChart(){
+  ["gridL","maria","rays","ranges","craters","sites","shadow","termband","labels","hits","frame","scale"]
+    .forEach(id => { $(id).textContent = ""; });
+  drawGrid(); drawMaria(); drawRays(); drawRanges(); drawCraters(); drawSites(); drawFrame();
+  drawShadow(); applySky();
+}
+
+function setLang(lang){
+  if(lang === S.lang || !LANGS.includes(lang)) return;
+  S.lang = lang;
+  try{ localStorage.setItem(LS_KEY, lang); }catch(e){}
+  const url = new URL(location.href);
+  url.searchParams.set("lang", lang);
+  history.replaceState(null, "", url);
+  renderChrome(); paintChart(); renderReadout(); renderTonight(); buildCatalogue();
+  const [t, i] = (S.sel || "crater:1").split(":");
+  select(t, +i);
+}
+
 /* ---------- wiring ---------- */
-function toggle(id, key, onLabel, offLabel){
+function toggle(id, key){
   const b = $(id);
   b.addEventListener("click", () => {
     S[key] = !S[key];
     b.setAttribute("aria-pressed", String(S[key]));
-    if(onLabel) b.textContent = S[key] ? onLabel : offLabel;
     applyVisibility();
-    if(key === "shadow"){ drawShadow(); renderTonight(); }
   });
 }
 
-$("dateline").textContent =
-  NOW.getDate() + " " + MONTHS[NOW.getMonth()] + " " + NOW.getFullYear();
 $("age").value = String(TODAY_AGE);
 
-drawGrid(); drawMaria(); drawRays(); drawRanges(); drawCraters(); drawSites(); drawFrame();
-renderReadout(); drawShadow(); renderTonight(); buildCatalogue();
+renderChrome();
+paintChart();
+renderReadout(); renderTonight(); buildCatalogue();
 select("crater", CRATERS.findIndex(c => c.n === "Copernicus"));
+
+$("langs").addEventListener("click", e => {
+  const b = e.target.closest("button[data-lang]");
+  if(b) setLang(b.dataset.lang);
+});
+
+function commitMag(v, echo){
+  const n = Math.round(v);
+  const clamped = Number.isFinite(n) ? Math.min(400, Math.max(2, n)) : S.mag;
+  if(echo) $("mag").value = String(clamped);
+  if(clamped === S.mag) return;
+  S.mag = clamped;
+  try{ localStorage.setItem(LS_MAG, String(S.mag)); }catch(err){}
+  renderChrome(); renderTonight(); applyVisibility();
+  if(S.sel){ const [t,i] = S.sel.split(":"); select(t, +i); }
+}
+/* live update only while the typed value is already usable; change/blur clamps
+   and echoes back, so the field never shows a magnification the page isn't using */
+$("mag").addEventListener("input", e => {
+  const v = parseFloat(e.target.value);
+  if(v >= 2 && v <= 400) commitMag(v, false);
+});
+["change","blur"].forEach(ev =>
+  $("mag").addEventListener(ev, e => commitMag(parseFloat(e.target.value), true)));
+
+$("geo").addEventListener("click", () => {
+  const b = $("geo");
+  if(!navigator.geolocation){ b.textContent = T().geoDenied; return; }
+  b.textContent = T().geoWait; b.disabled = true;
+  navigator.geolocation.getCurrentPosition(pos => {
+    b.disabled = false;
+    S.geo = {lat:pos.coords.latitude, lon:pos.coords.longitude, named:true};
+    try{ localStorage.setItem(LS_GEO, JSON.stringify({lat:S.geo.lat, lon:S.geo.lon})); }catch(e){}
+    S.sky = true; $("t-sky").setAttribute("aria-pressed","true");
+    renderChrome(); renderReadout(); applySky();
+  }, () => {
+    b.disabled = false; b.textContent = T().geoDenied;
+    setTimeout(() => { b.textContent = T().geoBtn; }, 2600);
+  }, {timeout:10000, maximumAge:600000});
+});
+
+$("t-sky").addEventListener("click", () => {
+  S.sky = !S.sky;
+  $("t-sky").setAttribute("aria-pressed", String(S.sky));
+  applySky();
+});
 
 $("age").addEventListener("input", e => {
   S.age = parseFloat(e.target.value);
   if(!S.shadow){ S.shadow = true; $("t-full").setAttribute("aria-pressed","false");
-    $("t-full").textContent = "Снять тень"; }
+    $("t-full").textContent = T().tShadowOff; }
   $("t-today").setAttribute("aria-pressed", String(Math.abs(S.age - TODAY_AGE) < .06));
   renderReadout(); drawShadow(); renderTonight();
   if(S.sel){ const [t,i] = S.sel.split(":"); select(t, +i); }
 });
 
+$("age").addEventListener("change", () => applySky());
+
 $("t-today").addEventListener("click", () => {
   S.age = TODAY_AGE; S.shadow = true;
   $("age").value = String(TODAY_AGE); $("t-today").setAttribute("aria-pressed","true");
-  $("t-full").setAttribute("aria-pressed","false"); $("t-full").textContent = "Снять тень";
+  $("t-full").setAttribute("aria-pressed","false"); $("t-full").textContent = T().tShadowOff;
   renderReadout(); drawShadow(); renderTonight();
   if(S.sel){ const [t,i] = S.sel.split(":"); select(t, +i); }
 });
@@ -901,7 +1370,7 @@ $("t-today").addEventListener("click", () => {
 $("t-full").addEventListener("click", () => {
   S.shadow = !S.shadow;
   $("t-full").setAttribute("aria-pressed", String(!S.shadow));
-  $("t-full").textContent = S.shadow ? "Снять тень" : "Вернуть тень";
+  $("t-full").textContent = S.shadow ? T().tShadowOff : T().tShadowOn;
   $("t-today").setAttribute("aria-pressed", String(S.shadow && Math.abs(S.age - TODAY_AGE) < .06));
   drawShadow(); renderTonight();
   if(S.sel){ const [t,i] = S.sel.split(":"); select(t, +i); }
