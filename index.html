@@ -1,33 +1,916 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-	<link href="styles/style.css" rel="stylesheet" type="text/css">
-	<link href="https://fonts.googleapis.com/css?family=Ruslan+Display" rel="stylesheet">
-    <title>A Clockwork Orange</title>
-  </head>
-  <body>
-	<h1>Clockwork Orange</h1>
-    <img src="images/theme.jpg" alt="Clockwork Orange">
-	<p>Алекс — персонаж романа Энтони Берджесса «Заводной апельсин» и одноименной экранизации Стэнли Кубрика,
-	в котором его роль исполняет Малькольм Макдауэлл. В кино-адаптации фамилией Алекса является ДэЛардж,
-	в связи с тем, что в романе Алекс называет себя «Александр Лардж», ссылаясь на образ Александра Великого.<p/>
-	<p>Ненумерованный список:</p>
-	<ul> 
-	  <li>первое</li>
-	  <li>второе</li>
-	  <li>третье</li>
-	</ul>
-	<p>Нумерованный список:</p>
-	<ol> 
-	  <li>первое</li>
-	  <li>второе</li>
-	  <li>третье</li>
-	</ol>
-	<a href="https://fonts.google.com/">Hypertext reference</a>
-	<a href="http://www.voidspace.org.uk/ironpython/winforms/index.shtml#the-tutorials">Hypertext reference</a>
-	<!-- Как и HTML, CSS на самом деле не является языком программирования.
-	Это не язык разметки - это язык таблицы стилей. -->
-	<script src="scripts/main.js"></script>
-  </body>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Лунный атлас</title>
+<meta name="description" content="Интерактивная карта видимой стороны Луны: 60 объектов с названиями, размерами и фактами. Тень идёт по настоящей фазе — карта показывает, что видно в бинокль именно сегодня.">
+<link rel="canonical" href="https://andrewivlev.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://andrewivlev.github.io/">
+<meta property="og:site_name" content="Лунный атлас">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:title" content="Лунный атлас">
+<meta property="og:description" content="60 объектов с названиями, размерами и фактами. Кратеры в истинном масштабе, тень идёт по настоящей фазе — видно, что доступно сегодня.">
+<meta property="og:image" content="https://andrewivlev.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Схема видимой стороны Луны с подписанными морями и кратерами">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Лунный атлас">
+<meta name="twitter:description" content="60 объектов с названиями, размерами и фактами. Тень идёт по настоящей фазе.">
+<meta name="twitter:image" content="https://andrewivlev.github.io/og.png">
+<meta name="theme-color" content="#0A0D12">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='16' r='13' fill='%23E4DCC9'/><path d='M6.5 6.5a13 13 0 0 0 0 19 15.5 15.5 0 0 1 0-19z' fill='%230A0D12'/></svg>">
+<style>
+  :root{
+    --ink:#0A0D12;
+    --ink-2:#111621;
+    --ink-3:#181E2B;
+    --bone:#E4DCC9;
+    --bone-dim:#CBC1A9;
+    --slate:#5A6479;
+    --slate-dark:#414A5D;
+    --brass:#A98A4B;
+    --verdigris:#7FA79A;
+    --amber:#DDA24A;
+    --text:#C7C2B5;
+    --muted:#78735F;
+    --line:rgba(169,138,75,.22);
+    --serif:"Iowan Old Style","Palatino Linotype",Palatino,"Book Antiqua",Georgia,serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(1200px 700px at 78% -8%, #17202F 0%, rgba(23,32,47,0) 60%),
+      var(--ink);
+    color:var(--text);
+    font-family:var(--serif);
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1180px;margin:0 auto;padding:34px 20px 90px}
+
+  /* ---------- masthead ---------- */
+  .eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 14px;
+  }
+  h1{
+    font-family:var(--serif);font-weight:400;font-size:clamp(30px,7vw,52px);
+    line-height:1.05;letter-spacing:-.015em;color:var(--bone);margin:0 0 10px;
+  }
+  h1 em{font-style:italic;color:var(--amber)}
+  .lede{max-width:56ch;font-size:15.5px;color:#A9A497;margin:0 0 26px}
+
+  .readout{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(132px,1fr));
+    gap:1px;background:var(--line);border:1px solid var(--line);margin:0 0 30px;
+  }
+  .readout div{background:var(--ink-2);padding:11px 13px}
+  .readout dt{font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+  .readout dd{margin:0;font-family:var(--mono);font-size:15px;color:var(--bone)}
+  .readout dd small{font-size:11px;color:var(--muted);letter-spacing:.04em}
+
+  /* ---------- layout ---------- */
+  .stage{display:grid;grid-template-columns:minmax(0,1.32fr) minmax(0,1fr);gap:26px;align-items:start}
+  @media(max-width:860px){.stage{grid-template-columns:1fr}}
+
+  .chart{position:relative}
+  svg#moon{width:100%;height:auto;display:block;touch-action:manipulation}
+  .hint{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    color:var(--muted);margin:12px 0 0;text-align:center}
+
+  /* ---------- controls ---------- */
+  .controls{margin-top:18px;border:1px solid var(--line);background:var(--ink-2);padding:16px}
+  .slider-row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:6px}
+  .slider-row label{font-family:var(--mono);font-size:10px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--muted)}
+  .slider-row output{font-family:var(--mono);font-size:13px;color:var(--amber)}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent;margin:0;
+  }
+  input[type=range]::-webkit-slider-runnable-track{height:2px;background:var(--line)}
+  input[type=range]::-moz-range-track{height:2px;background:var(--line)}
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:14px;height:14px;margin-top:-6px;border-radius:50%;
+    background:var(--amber);border:none;cursor:pointer}
+  input[type=range]::-moz-range-thumb{width:14px;height:14px;border:none;border-radius:50%;
+    background:var(--amber);cursor:pointer}
+  input[type=range]:focus-visible{outline:1px solid var(--verdigris);outline-offset:4px}
+
+  .toggles{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px}
+  .toggles button{
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+    background:transparent;color:var(--muted);border:1px solid var(--line);
+    padding:7px 11px;cursor:pointer;transition:color .15s,border-color .15s,background .15s}
+  .toggles button:hover{color:var(--bone-dim);border-color:rgba(169,138,75,.45)}
+  .toggles button[aria-pressed=true]{color:var(--ink);background:var(--verdigris);border-color:var(--verdigris)}
+  .toggles button:focus-visible{outline:1px solid var(--verdigris);outline-offset:3px}
+
+  /* ---------- panel ---------- */
+  .card{border:1px solid var(--line);background:var(--ink-2);padding:20px}
+  .card .kicker{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--verdigris);margin:0 0 8px}
+  .card h2{font-family:var(--serif);font-weight:400;font-style:italic;font-size:27px;
+    color:var(--bone);margin:0 0 2px;line-height:1.1}
+  .card .ru{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--muted);
+    margin:0 0 16px;text-transform:uppercase}
+  .metrics{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);
+    border:1px solid var(--line);margin:0 0 16px}
+  .metrics div{background:var(--ink-3);padding:9px 11px}
+  .metrics dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+    color:var(--muted);margin:0 0 3px}
+  .metrics dd{margin:0;font-family:var(--mono);font-size:14px;color:var(--bone)}
+  .card p.fact{font-size:15px;color:#B4AFA1;margin:0}
+  .card .verdict{font-family:var(--mono);font-size:11px;letter-spacing:.06em;margin:16px 0 0;
+    padding-top:14px;border-top:1px solid var(--line);color:var(--bone-dim)}
+
+  .tonight{margin-top:22px;border:1px solid var(--line);background:var(--ink-2);padding:20px}
+  .tonight h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--amber);margin:0 0 4px;font-weight:400}
+  .tonight p.sub{font-size:13.5px;color:var(--muted);margin:0 0 14px}
+  .tonight ol{list-style:none;margin:0;padding:0;counter-reset:t}
+  .tonight li{border-top:1px solid var(--line);padding:9px 0 8px;display:flex;gap:12px;align-items:baseline}
+  .tonight li:first-child{border-top:none}
+  .tonight li .nm{font-style:italic;font-size:16px;color:var(--bone);flex:1;cursor:pointer;
+    background:none;border:none;padding:0;text-align:left;font-family:var(--serif)}
+  .tonight li .nm:hover{color:var(--amber)}
+  .tonight li .dim{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap}
+  .tonight .empty{font-size:14px;color:var(--muted);margin:0}
+
+  /* ---------- catalogue ---------- */
+  .cat{margin-top:56px}
+  .cat h2{font-family:var(--serif);font-weight:400;font-size:26px;color:var(--bone);
+    margin:0 0 6px;letter-spacing:-.01em}
+  .cat > p{max-width:60ch;font-size:14.5px;color:var(--muted);margin:0 0 26px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:1px;
+    background:var(--line);border:1px solid var(--line)}
+  .grid .col{background:var(--ink-2);padding:18px}
+  .grid h3{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--verdigris);margin:0 0 12px;font-weight:400}
+  .grid ul{list-style:none;margin:0;padding:0}
+  .grid li{padding:5px 0}
+  .grid button{background:none;border:none;padding:0;cursor:pointer;text-align:left;
+    font-family:var(--serif);font-size:15.5px;color:var(--bone-dim);display:flex;
+    justify-content:space-between;gap:10px;width:100%}
+  .grid button:hover{color:var(--amber)}
+  .grid button span.n{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .grid button:focus-visible{outline:1px solid var(--verdigris);outline-offset:2px}
+
+  footer{margin-top:56px;padding-top:20px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);
+    display:flex;flex-wrap:wrap;gap:6px 22px}
+
+  /* svg bits */
+  .m-label{font-family:var(--serif);font-style:italic;fill:#0D1017;opacity:.66;
+    text-anchor:middle;pointer-events:none;letter-spacing:.06em}
+  .c-label{font-family:var(--mono);fill:#14181F;text-anchor:middle;pointer-events:none;
+    letter-spacing:.02em;paint-order:stroke;stroke:rgba(236,229,212,.92);stroke-width:3.6px}
+  .hit{pointer-events:all}
+  .hit{cursor:pointer;fill:transparent}
+  @media(prefers-reduced-motion:no-preference){
+    .fade{transition:opacity .35s ease}
+  }
+  /* labels must survive being scaled down on a phone */
+  @media(max-width:700px){
+    .m-label{font-size:24px !important}
+    .c-label{font-size:22px !important;stroke-width:5px}
+  }
+  @media(max-width:430px){
+    .wrap{padding:24px 14px 70px}
+    .card,.tonight,.controls,.grid .col{padding:15px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">Будва · 42.3° с.ш. &nbsp;/&nbsp; <span id="dateline"></span> &nbsp;/&nbsp; бинокль 10×</p>
+  <h1>Что видно на Луне<br><em>сегодня вечером</em></h1>
+  <p class="lede">Векторная карта видимой стороны, построенная по селенографическим координатам:
+     кратеры нанесены в истинном масштабе и с учётом ракурса у края диска. Тень движется по
+     настоящей фазе — тяните ползунок, чтобы увидеть любую ночь цикла. Тапайте объекты.</p>
+
+  <dl class="readout">
+    <div><dt>Фаза</dt><dd id="r-phase">растущая</dd></div>
+    <div><dt>Освещено</dt><dd id="r-illum">96%</dd></div>
+    <div><dt>Терминатор</dt><dd id="r-term">66° з.д.</dd></div>
+    <div><dt>Предел 10×</dt><dd>≈20 км <small>детали</small></dd></div>
+    <div><dt>Масштаб</dt><dd>1 px ≈ 3,8 км</dd></div>
+  </dl>
+</header>
+
+<div class="stage">
+  <section class="chart">
+    <svg id="moon" viewBox="0 0 1000 1000" role="img"
+         aria-label="Схема видимой стороны Луны с подписями морей и кратеров">
+      <defs>
+        <radialGradient id="gLimb" cx="50%" cy="50%" r="50%">
+          <stop offset="72%" stop-color="#E4DCC9"/>
+          <stop offset="100%" stop-color="#AFA48A"/>
+        </radialGradient>
+        <radialGradient id="gRay" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#FFFBF0" stop-opacity=".55"/>
+          <stop offset="100%" stop-color="#FFFBF0" stop-opacity="0"/>
+        </radialGradient>
+        <filter id="soft"><feGaussianBlur stdDeviation="6"/></filter>
+      </defs>
+
+      <circle cx="500" cy="500" r="472" fill="none" stroke="rgba(169,138,75,.16)"/>
+      <circle id="disk" cx="500" cy="500" r="460" fill="url(#gLimb)"/>
+      <g id="gridL" opacity=".5"></g>
+      <g id="maria"></g>
+      <g id="rays"></g>
+      <g id="ranges"></g>
+      <g id="craters"></g>
+      <g id="sites" style="display:none"></g>
+      <g id="shadow"></g>
+      <g id="termband"></g>
+      <g id="labels"></g>
+      <g id="hits"></g>
+      <g id="frame"></g>
+    </svg>
+    <p class="hint">Север сверху · восток справа (как в бинокль без призмы-перевёртыша)</p>
+
+    <div class="controls">
+      <div class="slider-row">
+        <label for="age">Возраст Луны</label>
+        <output id="ageOut">13.0 сут</output>
+      </div>
+      <input id="age" type="range" min="0" max="29.53" step="0.05">
+      <div class="toggles">
+        <button id="t-today" aria-pressed="true">Сегодня</button>
+        <button id="t-full" aria-pressed="false">Снять тень</button>
+        <button id="t-names" aria-pressed="false">Все подписи</button>
+        <button id="t-bino" aria-pressed="false">Только для 10×</button>
+        <button id="t-sites" aria-pressed="false">Места посадок</button>
+      </div>
+    </div>
+  </section>
+
+  <aside>
+    <article class="card" id="card">
+      <p class="kicker" id="c-kind">Кратер</p>
+      <h2 id="c-name">Copernicus</h2>
+      <p class="ru" id="c-ru">Коперник</p>
+      <dl class="metrics">
+        <div><dt>Диаметр</dt><dd id="c-d">93 км</dd></div>
+        <div><dt>Глубина / высота</dt><dd id="c-h">3.8 км</dd></div>
+        <div><dt>Координаты</dt><dd id="c-co">9.6° с · 20.1° з</dd></div>
+        <div><dt>В бинокль 10×</dt><dd id="c-v">уверенно</dd></div>
+      </dl>
+      <p class="fact" id="c-fact"></p>
+      <p class="verdict" id="c-now"></p>
+    </article>
+
+    <section class="tonight">
+      <h3>Лучший контраст сегодня</h3>
+      <p class="sub">Объекты у линии терминатора: солнце там стоит низко, тени вытянуты в десятки
+         километров, и рельеф читается лучше всего.</p>
+      <ol id="tonightList"></ol>
+    </section>
+  </aside>
+</div>
+
+<section class="cat">
+  <h2>Каталог: <span id="catCount">—</span> объектов видимой стороны</h2>
+  <p>Размер в скобках — диаметр по большой оси. Для сравнения: Черногория от Херцег-Нови до
+     Улциня — примерно 100 км, то есть один Коперник.</p>
+  <div class="grid" id="cat"></div>
+</section>
+
+<footer>
+  <span>Проекция ортографическая, R = 1737 км</span>
+  <span>Координаты и размеры — по данным IAU / USGS Gazetteer of Planetary Nomenclature</span>
+  <span>Очертания морей схематичны</span>
+</footer>
+</div>
+
+<script>
+"use strict";
+const R = 460, CX = 500, CY = 500;
+const KM = R / 1737;              /* px per km */
+const D2R = Math.PI / 180;
+
+/* ---------- projection: orthographic, north up, east (IAU) right ---------- */
+function proj(lat, lon){
+  const la = lat * D2R, lo = lon * D2R;
+  const x = CX + R * Math.cos(la) * Math.sin(lo);
+  const y = CY - R * Math.sin(la);
+  const d = Math.hypot(x - CX, y - CY);
+  const f = Math.sqrt(Math.max(0, 1 - (d / R) ** 2));   /* foreshortening */
+  const ang = Math.atan2(y - CY, x - CX) * 180 / Math.PI;
+  return {x, y, f, ang, d};
+}
+
+/* ---------- data ----------
+   v: 1 = видно уверенно в 10×, 2 = на пределе, 3 = нужен телескоп        */
+const MARIA = [
+ {n:"Mare Imbrium", ru:"Море Дождей", lat:32.8, lon:-15.6, dia:1146, v:1,
+  cx:396, cy:251, rx:142, ry:126, rot:0, fs:30,
+  f:"Крупнейший ударный бассейн видимой стороны. Тело диаметром ~250 км ударило сюда ~3.9 млрд лет назад и выбило кольцо горных цепей — Апеннины, Альпы, Кавказ, Юра. Через полмиллиарда лет чашу залила базальтовая лава."},
+ {n:"Oceanus Procellarum", ru:"Океан Бурь", lat:18.4, lon:-57.4, dia:2568, v:1,
+  parts:[[150,382,92,212,-6],[233,252,80,110,22],[243,566,92,142,-16]], cx:150, cy:400, fs:26,
+  f:"Единственный «океан» на Луне: около 4 млн км² — больше Индии. Не бассейн, а огромное лавовое поле неправильной формы; здесь толща базальта местами превышает 3 км."},
+ {n:"Mare Tranquillitatis", ru:"Море Спокойствия", lat:8.5, lon:31, dia:873, v:1,
+  cx:734, cy:432, rx:96, ry:106, rot:-26, fs:24,
+  f:"20 июля 1969 «Орёл» сел у его юго-западного края. Море богато титаном: базальты здесь тёмнее и синее соседних, что видно даже на цветных фотографиях."},
+ {n:"Mare Serenitatis", ru:"Море Ясности", lat:28, lon:17.5, dia:707, v:1,
+  cx:622, cy:284, rx:86, ry:96, rot:16, fs:23,
+  f:"Самое «ровное» из морей: перепад высот по центру — считанные сотни метров. У его края, в долине Таурус-Литтров, работал экипаж «Аполлона-17» — последние люди на Луне."},
+ {n:"Mare Frigoris", ru:"Море Холода", lat:56, lon:1.4, dia:1596, v:1,
+  cx:482, cy:128, rx:258, ry:34, rot:0, fs:22,
+  f:"Не круглый бассейн, а вытянутая дуга длиной 1600 км вдоль северного края диска — прогиб коры за пределами вала Моря Дождей."},
+ {n:"Mare Crisium", ru:"Море Кризисов", lat:17, lon:59, dia:556, v:1,
+  cx:877, cy:366, rx:43, ry:76, rot:-8, fs:17, short:"Crisium",
+  f:"Обособленный тёмный овал у правого края — заметен невооружённым глазом. В реальности он шире, чем выше (556 × 418 км), но ракурс сжимает его в вертикальный эллипс. Здесь «Луна-24» взяла грунт в 1976-м."},
+ {n:"Mare Fecunditatis", ru:"Море Изобилия", lat:-7.8, lon:51.3, dia:840, v:1,
+  cx:856, cy:562, rx:46, ry:98, rot:-6, fs:16, short:"Fecunditatis",
+  f:"Сюда в 1970-м села «Луна-16» — первый автомат, доставивший лунный грунт на Землю. Толщина лавы здесь мала, поэтому море светлее большинства соседей."},
+ {n:"Mare Nubium", ru:"Море Облаков", lat:-21.3, lon:-16.6, dia:715, v:1,
+  cx:378, cy:667, rx:86, ry:72, rot:0, fs:21,
+  f:"На его восточной кромке — Прямая Стена, самый известный лунный разлом. Само море изрыто «затопленными» кратерами, от которых остались лишь дуги валов."},
+ {n:"Mare Humorum", ru:"Море Влажности", lat:-24.4, lon:-38.6, dia:389, v:1,
+  cx:239, cy:690, rx:43, ry:53, rot:-10, fs:16, short:"Humorum",
+  f:"Компактный круглый бассейн — учебный пример: чётко видно кольцевой вал, а по краям — концентрические трещины, где лава продавила кору вниз."},
+ {n:"Mare Nectaris", ru:"Море Нектара", lat:-15.2, lon:35.5, dia:333, v:1,
+  cx:758, cy:621, rx:39, ry:49, rot:-18, fs:15, short:"Nectaris",
+  f:"Небольшое море, зато по нему датируют всю лунную геологию: удар, создавший бассейн Нектара, задаёт границу нектарского периода (~3.9 млрд лет)."},
+ {n:"Mare Vaporum", ru:"Море Паров", lat:13.3, lon:3.6, dia:245, v:2,
+  cx:528, cy:394, rx:39, ry:27, rot:0, fs:15,
+  f:"Тёмное пятно между Апеннинами и центром диска. Рядом — Гигинова борозда, трещина с провалившимися участками кровли лавовой трубы."},
+ {n:"Mare Cognitum", ru:"Море Познанное", lat:-10, lon:-23, dia:350, v:2,
+  cx:323, cy:580, rx:43, ry:33, rot:0, fs:15,
+  f:"Названо в честь «Рейнджера-7», передавшего первые детальные снимки перед тем, как разбиться здесь в 1964-м. Неподалёку садился «Аполлон-14»."},
+ {n:"Sinus Iridum", ru:"Залив Радуги", lat:44, lon:-31.5, dia:236, v:2,
+  cx:327, cy:180, rx:33, ry:27, rot:-28, fs:14, short:"S. Iridum",
+  f:"Кратер, у которого лава смыла всю южную стенку — получилась бухта, обрамлённая горами Юра. При низком солнце их вершины светятся над тенью: эффект «жемчужного ожерелья»."}
+];
+
+const CRATERS = [
+ {n:"Tycho", ru:"Тихо", lat:-43.4, lon:-11.1, dia:85, dep:4.8, v:1, key:1,
+  f:"Молодой (≈108 млн лет) и потому самый яркий центр лучевой системы: светлые выбросы тянутся на 1500 км и в полнолуние делают юг диска похожим на разбитое стекло. В бинокль — белый «пупок» Луны."},
+ {n:"Copernicus", ru:"Коперник", lat:9.6, lon:-20.1, dia:93, dep:3.8, v:1, key:1,
+  f:"Эталонный крупный кратер: террасированные стены-оползни, центральная горка высотой 1.2 км, вал поднят на 900 м над окружающей равниной. Возраст ~800 млн лет."},
+ {n:"Clavius", ru:"Клавий", lat:-58.8, lon:-14.1, dia:225, dep:3.5, v:1, key:1,
+  f:"Одна из крупнейших воронок видимой стороны — 225 км, внутри поместилась бы Черногория. По дну идёт дуга кратеров, убывающих по размеру, как убегающая гамма."},
+ {n:"Plato", ru:"Платон", lat:51.6, lon:-9.3, dia:101, dep:1.0, v:1, key:1,
+  f:"Тёмный ровный «блин» на светлом фоне северных горных областей: чашу залила лава, и дно стало гладким, как море. Резкий контраст делает его легкой добычей для бинокля."},
+ {n:"Aristarchus", ru:"Аристарх", lat:23.7, lon:-47.4, dia:40, dep:3.7, v:1, key:1,
+  f:"Самая яркая крупная деталь Луны — отражает ~28% света, вдвое больше среднего. Возраст всего ~450 млн лет. Рядом — извилистая долина Шрётера, канал древнего лавового потока."},
+ {n:"Grimaldi", ru:"Гримальди", lat:-5.5, lon:-68.3, dia:173, v:1, key:1,
+  f:"Самое тёмное место видимой стороны: альбедо ~6%, темнее любого моря. Ищите почти у самого западного края — из-за ракурса он сплющен в узкий эллипс."},
+ {n:"Ptolemaeus", ru:"Птолемей", lat:-9.2, lon:-1.8, dia:153, v:1, key:1,
+  f:"Верхнее звено знаменитой цепочки из трёх кратеров в самом центре диска. Дно затоплено и почти лишено деталей — заметны лишь «кратеры-призраки»."},
+ {n:"Alphonsus", ru:"Альфонс", lat:-13.4, lon:-2.8, dia:119, dep:2.7, v:1,
+  f:"Среднее звено цепочки. В 1958-м здесь наблюдали красноватое свечение — один из самых обсуждаемых случаев «краткосрочных лунных явлений». Сюда же упал «Рейнджер-9»."},
+ {n:"Arzachel", ru:"Арзахель", lat:-18.2, lon:-1.9, dia:96, dep:3.6, v:1,
+  f:"Нижнее и самое молодое звено: стены ещё резкие, центральная горка целая. Втроём с Птолемеем и Альфонсом — идеальная демонстрация того, как кратеры стареют."},
+ {n:"Theophilus", ru:"Теофил", lat:-11.4, lon:26.4, dia:100, dep:4.4, v:1, key:1,
+  f:"Самый глубокий из трёх у Моря Нектара — 4.4 км, и он врезался в соседний Кирилл, обрубив ему вал. Центральная горка — целый массив 30 км в поперечнике."},
+ {n:"Cyrillus", ru:"Кирилл", lat:-13.2, lon:24, dia:98, v:1,
+  f:"Средний в «лестнице» Теофил–Кирилл–Екатерина. Разрушен сильнее соседей: по нему видно, кто пришёл раньше, а кто позже."},
+ {n:"Catharina", ru:"Екатерина", lat:-18.1, lon:23.4, dia:104, v:1,
+  f:"Древнейший из трёх: вал изъеден позднейшими ударами, центральной горки нет вовсе. Возраст — свыше 3.9 млрд лет."},
+ {n:"Petavius", ru:"Петавий", lat:-25.1, lon:60.4, dia:177, dep:3.3, v:1, key:1,
+  f:"Выпуклое дно, вздутое поднявшейся магмой, и рассёкший его рифт длиной 80 км. Ловите в первые дни после новолуния или у самого терминатора — иначе плоско."},
+ {n:"Langrenus", ru:"Лангрен", lat:-8.9, lon:61.1, dia:132, dep:2.7, v:1,
+  f:"Яркие террасы на восточном краю Моря Изобилия. При полной фазе выделяется светлым пятном — свежие выбросы ещё не потемнели от космического загара."},
+ {n:"Cleomedes", ru:"Клеомед", lat:27.7, lon:55.5, dia:130, v:1,
+  f:"Крупный кратер прямо к северу от Моря Кризисов — удобный ориентир: сначала находите тёмный овал моря, затем поднимаетесь на один шаг вверх."},
+ {n:"Posidonius", ru:"Посидоний", lat:31.8, lon:29.9, dia:95, v:1, key:1,
+  f:"Затопленный лавой кратер на кромке Моря Ясности с редкой деталью — внутренним кольцом. По дну змеятся борозды, следы просевших лавовых каналов."},
+ {n:"Aristoteles", ru:"Аристотель", lat:50.2, lon:17.4, dia:87, dep:3.3, v:1, key:1,
+  f:"Северная пара с Евдоксом — заметный дуэт на границе Моря Холода. Вал изборождён радиальными складками от собственного выброса."},
+ {n:"Eudoxus", ru:"Евдокс", lat:44.3, lon:16.3, dia:67, dep:3.4, v:1,
+  f:"Младший партнёр Аристотеля. Две почти одинаковые чаши рядом — хороший тест: если различаете обе, у вас спокойный воздух и твёрдые руки."},
+ {n:"Atlas", ru:"Атлас", lat:46.7, lon:44.4, dia:87, dep:2.0, v:1, key:1,
+  f:"Пара с Гераклом у северо-восточного края. По дну — тёмные пятна пирокластики: здесь были вулканические выбросы уже после самого удара."},
+ {n:"Hercules", ru:"Геркулес", lat:46.7, lon:39.1, dia:69, dep:3.2, v:1,
+  f:"Сосед Атласа, с гладким лавовым дном и одним аккуратным свежим кратером посередине. Классическая «двойка» для бинокля."},
+ {n:"Archimedes", ru:"Архимед", lat:29.7, lon:-4, dia:83, v:1, key:1,
+  f:"Идеально ровное лавовое дно без центральной горки: кратер образовался раньше, чем Море Дождей залило лавой, и его просто затопило по края."},
+ {n:"Kepler", ru:"Кеплер", lat:8.1, lon:-38, dia:32, dep:2.6, v:1,
+  f:"Маленький, но с мощным светлым нимбом выбросов посреди тёмного Океана Бурь — потому и виден. В полнолуние выглядит крупнее, чем есть."},
+ {n:"Gassendi", ru:"Гассенди", lat:-17.6, lon:-40.1, dia:110, dep:1.9, v:1,
+  f:"Сидит на северной кромке Моря Влажности, как перстень на пальце, с крупным кратером-«подвеской» на валу. Дно исчерчено сетью трещин."},
+ {n:"Bullialdus", ru:"Буллиальд", lat:-20.7, lon:-22.2, dia:61, dep:3.5, v:1,
+  f:"Миниатюрный Коперник в центре Моря Облаков: те же террасы и та же горка, только в полтора раза меньше. Хорошая цель для проверки оптики."},
+ {n:"Schickard", ru:"Шиккард", lat:-44.3, lon:-55.3, dia:212, v:1,
+  f:"Огромная древняя чаша у юго-западного края с необычным дном: тёмные полосы лавы чередуются со светлыми выбросами из бассейна Ориентале."},
+ {n:"Maurolycus", ru:"Маролик", lat:-41.8, lon:14, dia:114, dep:4.7, v:1,
+  f:"В хаосе южных горных областей это самая крупная и глубокая деталь — 4.7 км. У терминатора её тень пересекает половину соседних кратеров."},
+ {n:"Proclus", ru:"Прокл", lat:16.1, lon:46.8, dia:28, v:2,
+  f:"Крошечная, но пронзительно яркая точка на западном берегу Моря Кризисов. Лучи разлетаются веером только в одну сторону — удар был косым."},
+ {n:"Manilius", ru:"Манилий", lat:14.5, lon:9.1, dia:39, dep:3.1, v:2,
+  f:"Яркая искра у Моря Паров, всего 39 км — примерно предел того, что 10× показывает как настоящий кружок, а не точку."},
+ {n:"Pythagoras", ru:"Пифагор", lat:63.5, lon:-63, dia:130, dep:5.0, v:2,
+  f:"Прижат к северо-западному краю и виден почти «с торца»: центральная горка высотой 3 км при низком солнце отбрасывает тень через весь кратер."},
+ {n:"Plinius", ru:"Плиний", lat:15.4, lon:23.7, dia:41, dep:2.3, v:2,
+  f:"Сидит на перемычке между Морем Спокойствия и Морем Ясности — удобная «пограничная застава» при обходе диска."},
+ {n:"Fracastorius", ru:"Фракасторо", lat:-21.2, lon:33.2, dia:124, v:2,
+  f:"Кратер с вырезанной северной стенкой: Море Нектара прорвалось внутрь и превратило его в подкову."},
+ {n:"Piccolomini", ru:"Пикколомини", lat:-29.7, lon:32.2, dia:88, dep:4.5, v:2,
+  f:"Якорь южного конца Алтайского Уступа — 480-километрового обрыва, внешнего вала бассейна Нектара."},
+ {n:"Stevinus", ru:"Стевин", lat:-32.5, lon:54.2, dia:74, dep:3.0, v:2,
+  f:"Вместе с соседним Фурнерием образует яркую пару на юго-востоке. Рядом крошечный кратер Стевин A с ослепительным нимбом."},
+ {n:"Langrenus B", ru:"—", lat:-4.9, lon:59.8, dia:37, v:3, skipLabel:1,
+  f:"Спутник Лангрена; в бинокль не разделяется."},
+ {n:"Aristillus", ru:"Аристилл", lat:33.9, lon:1.2, dia:55, dep:3.6, v:2,
+  f:"Вместе с Автоликом и Архимедом — треугольник на востоке Моря Дождей. Заметен по светлому венчику выбросов."},
+ {n:"Autolycus", ru:"Автолик", lat:30.7, lon:1.5, dia:39, dep:3.4, v:3,
+  f:"Меньший спутник Аристилла. Рядом, в 1959-м, разбилась «Луна-2» — первый рукотворный объект на Луне."},
+ {n:"Eratosthenes", ru:"Эратосфен", lat:14.5, lon:-11.3, dia:59, dep:3.6, v:2,
+  f:"Стоит на самом конце Апеннин и дал имя целой геологической эпохе — эратосфенской. Молодой вал, но лучей уже нет: они стёрлись."},
+ {n:"Timocharis", ru:"Тимохарис", lat:26.7, lon:-13.1, dia:34, dep:3.1, v:3,
+  f:"Одинокая яркая точка в середине Моря Дождей — полезный ориентир для оценки расстояний по морю."},
+ {n:"Menelaus", ru:"Менелай", lat:16.3, lon:16, dia:27, dep:3.0, v:3,
+  f:"Крошечный, но один из самых ярких на Луне: свежие выбросы на тёмном базальте Моря Ясности."},
+ {n:"Censorinus", ru:"Цензорин", lat:-0.4, lon:32.7, dia:3.8, v:3, skipLabel:1,
+  f:"Всего 3.8 км, но одно из самых ярких пятнышек Луны — предел даже для крупных телескопов."}
+];
+
+const RANGES = [
+ {n:"Montes Apenninus", ru:"Апеннины", d:"path", p:"M 522 292 Q 480 348 428 404",
+  lat:18.9, lon:-3.7, dia:600, h:5.5, v:1, key:1, lx:560, ly:330,
+  f:"Главный вал Моря Дождей: 600 км дуги, вершины до 5.5 км (Mons Huygens — высшая точка Луны над окружающей местностью). У терминатора цепь выглядит как зубчатая пила."},
+ {n:"Montes Alpes", ru:"Альпы", d:"path", p:"M 438 208 Q 478 176 516 158",
+  lat:46.4, lon:0.8, dia:281, h:3.6, v:1, lx:412, ly:196,
+  f:"Северо-восточный борт Моря Дождей. Его рассекает Альпийская Долина — прямой жёлоб 166 км длиной и 10 км шириной, грабен, провалившийся между двумя разломами."},
+ {n:"Montes Caucasus", ru:"Кавказ", d:"path", p:"M 552 250 Q 570 218 580 182",
+  lat:38.4, lon:10, dia:445, h:6.0, v:2, lx:606, ly:228,
+  f:"Перегородка между Морем Дождей и Морем Ясности — остаток вала, который лава так и не смогла перелить."},
+ {n:"Montes Jura", ru:"Юра", d:"path", p:"M 288 206 Q 294 142 352 146",
+  lat:47, lon:-34, dia:422, h:6.0, v:2, lx:268, ly:236,
+  f:"Дуга, обнимающая Залив Радуги. Мыс Лапласа на её конце — обрыв высотой 3 км, обрывающийся прямо в лаву."},
+ {n:"Montes Carpatus", ru:"Карпаты", d:"path", p:"M 286 372 Q 326 364 366 370",
+  lat:14.5, lon:-24.4, dia:361, h:2.0, v:2, lx:300, ly:398,
+  f:"Южная стенка Моря Дождей, к северу от Коперника — самая низкая из ободных цепей: лава почти похоронила её."},
+ {n:"Rupes Recta", ru:"Прямая Стена", d:"line", x1:441, y1:657, x2:445, y2:689,
+  lat:-22.1, lon:-7.8, dia:110, h:0.3, v:3, lx:478, ly:676,
+  f:"Не стена, а разлом: 110 км идеально прямого уступа высотой всего 240–300 м с уклоном ~7°. Тень делает его чёрной чертой на 2–3 дня после первой четверти."},
+ {n:"Vallis Alpes", ru:"Альпийская Долина", d:"line", x1:504, y1:176, x2:532, y2:139,
+  lat:48.5, lon:3.2, dia:166, v:3, lx:556, ly:154,
+  f:"Единственный лунный грабен, который видно в средний телескоп: рассекает Альпы насквозь, а по его дну тянется тонкий извилистый канал."}
+];
+
+const SITES = [
+ {n:"Apollo 11", lat:0.67, lon:23.47}, {n:"Apollo 15", lat:26.13, lon:3.63},
+ {n:"Apollo 17", lat:20.19, lon:30.77}, {n:"Луна-9", lat:7.08, lon:-64.37},
+ {n:"Луноход-1", lat:38.28, lon:-35.0}, {n:"Луноход-2", lat:25.85, lon:30.45},
+ {n:"Луна-16", lat:-0.68, lon:56.3}, {n:"Луна-24", lat:12.25, lon:62.2},
+ {n:"Chang'e-3", lat:44.12, lon:-19.51}
+];
+
+/* ---------- фаза Луны на текущий момент ----------
+   Усечённые ряды ELP2000/VSOP87 (Meeus, гл. 25 и 47): эклиптические долготы
+   Луны и Солнца с ошибкой < 0.1°. Ведущая величина — элонгация E:
+   E = 0° новолуние, 180° полнолуние. Терминатор и освещённость выводятся
+   из неё напрямую, а «возраст в сутках» — лишь удобная единица для ползунка. */
+const SYN = 29.530588853;
+function julianDay(d){ return d.getTime() / 86400000 + 2440587.5; }
+function nrm360(x){ return ((x % 360) + 360) % 360; }
+function elongation(date){
+  const T = (julianDay(date) - 2451545.0) / 36525, r = D2R;
+  const Ls = 280.46646 + 36000.76983*T + 0.0003032*T*T;
+  const Ms = 357.52911 + 35999.05029*T - 0.0001537*T*T;
+  const C  = (1.914602 - 0.004817*T)*Math.sin(Ms*r)
+           + (0.019993 - 0.000101*T)*Math.sin(2*Ms*r)
+           + 0.000289*Math.sin(3*Ms*r);
+  const sun = nrm360(Ls + C);
+  const Lm = 218.3164477 + 481267.88123421*T - 0.0015786*T*T;
+  const D  = 297.8501921 + 445267.1114034*T  - 0.0018819*T*T;
+  const Mm = 134.9633964 + 477198.8675055*T  + 0.0087414*T*T;
+  const F  = 93.2720950  + 483202.0175233*T  - 0.0036539*T*T;
+  const dL = 6.288774*Math.sin(Mm*r) + 1.274027*Math.sin((2*D-Mm)*r)
+    + 0.658314*Math.sin(2*D*r)       + 0.213618*Math.sin(2*Mm*r)
+    - 0.185116*Math.sin(Ms*r)        - 0.114332*Math.sin(2*F*r)
+    + 0.058793*Math.sin((2*D-2*Mm)*r)+ 0.057066*Math.sin((2*D-Ms-Mm)*r)
+    + 0.053322*Math.sin((2*D+Mm)*r)  + 0.045758*Math.sin((2*D-Ms)*r)
+    - 0.040923*Math.sin((Ms-Mm)*r)   - 0.034720*Math.sin(D*r)
+    - 0.030383*Math.sin((Ms+Mm)*r)   + 0.015327*Math.sin((2*D-2*F)*r)
+    - 0.012528*Math.sin((Mm+2*F)*r)  + 0.010980*Math.sin((Mm-2*F)*r)
+    + 0.010675*Math.sin((4*D-Mm)*r)  + 0.010034*Math.sin(3*Mm*r);
+  return nrm360(nrm360(Lm + dL) - sun);
+}
+const NOW = new Date();
+const TODAY_AGE = elongation(NOW) / 360 * SYN;
+const MONTHS = ["января","февраля","марта","апреля","мая","июня",
+                "июля","августа","сентября","октября","ноября","декабря"];
+
+/* ---------- state ---------- */
+const S = {age:TODAY_AGE, shadow:true, allNames:false, binoOnly:false, sites:false, sel:null};
+const $ = id => document.getElementById(id);
+const SVGNS = "http://www.w3.org/2000/svg";
+function el(tag, attrs){
+  const e = document.createElementNS(SVGNS, tag);
+  for(const k in attrs) e.setAttribute(k, attrs[k]);
+  return e;
+}
+const VIS = {1:"уверенно", 2:"на пределе", 3:"нужен телескоп"};
+const ru = n => String(n).replace(".", ",");
+const dkm = d => d >= 1000 ? ru((Math.round(d/10)/100).toFixed(2)) + " тыс. км" : ru(d) + " км";
+
+/* ---------- static layers ---------- */
+function drawGrid(){
+  const g = $("gridL");
+  for(let lon=-60; lon<=60; lon+=30){
+    let d = "";
+    for(let lat=-90; lat<=90; lat+=3){
+      const p = proj(lat, lon);
+      d += (lat===-90 ? "M " : "L ") + p.x.toFixed(1) + " " + p.y.toFixed(1) + " ";
+    }
+    g.appendChild(el("path",{d, fill:"none", stroke:"#8A7A55", "stroke-width":.8, opacity:.22}));
+  }
+  for(let lat=-60; lat<=60; lat+=30){
+    let d = "";
+    for(let lon=-90; lon<=90; lon+=3){
+      const p = proj(lat, lon);
+      d += (lon===-90 ? "M " : "L ") + p.x.toFixed(1) + " " + p.y.toFixed(1) + " ";
+    }
+    g.appendChild(el("path",{d, fill:"none", stroke:"#8A7A55", "stroke-width":.8, opacity:.22}));
+  }
+}
+
+function drawMaria(){
+  const g = $("maria"), L = $("labels"), H = $("hits");
+  MARIA.forEach((m, i) => {
+    const grp = el("g", {opacity:".92"});
+    const shapes = m.parts
+      ? m.parts.map(p => ({cx:p[0], cy:p[1], rx:p[2], ry:p[3], rot:p[4]}))
+      : [{cx:m.cx, cy:m.cy, rx:m.rx, ry:m.ry, rot:m.rot}];
+    shapes.forEach(s => {
+      grp.appendChild(el("ellipse",{
+        cx:0, cy:0, rx:s.rx, ry:s.ry, fill:"#5A6479",
+        transform:`translate(${s.cx},${s.cy}) rotate(${s.rot})`
+      }));
+    });
+    grp.setAttribute("data-t","mare"); grp.setAttribute("data-i", i);
+    g.appendChild(grp);
+
+    const t = el("text",{x:m.cx, y:m.cy + m.fs*0.34, class:"m-label", "font-size":m.fs});
+    t.textContent = m.short ||
+      m.n.replace("Mare ","M. ").replace("Oceanus ","O. ").replace("Sinus ","S. ");
+    L.appendChild(t);
+
+    const hit = el("ellipse",{cx:m.cx, cy:m.cy, rx:(m.rx||100), ry:(m.ry||180), class:"hit"});
+    hit.addEventListener("click", () => select("mare", i));
+    H.appendChild(hit);
+  });
+}
+
+function drawRays(){
+  const g = $("rays");
+  [["Tycho",-43.4,-11.1,150],["Copernicus",9.6,-20.1,120],
+   ["Aristarchus",23.7,-47.4,80],["Kepler",8.1,-38,70],["Proclus",16.1,46.8,50]]
+   .forEach(([, lat, lon, rad]) => {
+     const p = proj(lat, lon);
+     g.appendChild(el("circle",{cx:p.x, cy:p.y, r:rad, fill:"url(#gRay)", opacity:.7}));
+   });
+}
+
+function drawRanges(){
+  const g = $("ranges"), L = $("labels"), H = $("hits");
+  RANGES.forEach((m, i) => {
+    let node;
+    if(m.d === "path"){
+      node = el("path",{d:m.p, fill:"none", stroke:"#C9B98C",
+        "stroke-width":7, "stroke-linecap":"round", opacity:.85});
+    }else{
+      node = el("line",{x1:m.x1, y1:m.y1, x2:m.x2, y2:m.y2,
+        stroke:"#2E3444", "stroke-width":3, "stroke-linecap":"round", opacity:.9});
+    }
+    node.setAttribute("data-range", i);
+    g.appendChild(node);
+
+    const t = el("text",{x:m.lx, y:m.ly, class:"c-label", "font-size":13, opacity:.85});
+    t.textContent = m.ru;
+    t.setAttribute("data-lbl-range", i);
+    L.appendChild(t);
+
+    const hit = m.d === "path"
+      ? el("path",{d:m.p, fill:"none", stroke:"transparent", "stroke-width":26, class:"hit"})
+      : el("line",{x1:m.x1, y1:m.y1, x2:m.x2, y2:m.y2, stroke:"transparent",
+                   "stroke-width":26, class:"hit"});
+    hit.addEventListener("click", () => select("range", i));
+    H.appendChild(hit);
+  });
+}
+
+function drawCraters(){
+  const g = $("craters"), L = $("labels"), H = $("hits");
+  CRATERS.forEach((c, i) => {
+    const p = proj(c.lat, c.lon);
+    const r = Math.max(1.6, c.dia * KM / 2);
+    const grp = el("g",{"data-crater":i});
+    grp.appendChild(el("ellipse",{cx:0, cy:0, rx:Math.max(.8, r*p.f), ry:r,
+      fill:"rgba(116,104,74,.20)", stroke:"#6C6248", "stroke-width":Math.min(2.0, .85 + r*.045),
+      transform:`translate(${p.x.toFixed(1)},${p.y.toFixed(1)}) rotate(${p.ang.toFixed(1)})`}));
+    if(r > 9) grp.appendChild(el("circle",{cx:p.x, cy:p.y, r:Math.max(1.4, r*.11),
+      fill:"#5C5440", opacity:.8}));
+    g.appendChild(grp);
+
+    if(!c.skipLabel){
+      const out = 1 + (r + 13) / Math.max(1, p.d);
+      const lx = CX + (p.x - CX) * out, ly = CY + (p.y - CY) * out;
+      const t = el("text",{x:lx.toFixed(1), y:(ly + 4).toFixed(1),
+        "font-size":c.key ? 15 : 12.5, "data-lbl-crater":i,
+        class:"c-label" + (c.key ? " key" : "")});
+      t.textContent = c.n;
+      L.appendChild(t);
+    }
+
+    const hit = el("circle",{cx:p.x, cy:p.y, r:Math.max(20, r + 6), class:"hit"});
+    hit.addEventListener("click", () => select("crater", i));
+    H.appendChild(hit);
+  });
+}
+
+function drawSites(){
+  const g = $("sites");
+  SITES.forEach(s => {
+    const p = proj(s.lat, s.lon);
+    const k = 6;
+    g.appendChild(el("path",{d:`M ${p.x-k} ${p.y} H ${p.x+k} M ${p.x} ${p.y-k} V ${p.y+k}`,
+      stroke:"#2E5A4E", "stroke-width":1.8}));
+    const t = el("text",{x:p.x, y:p.y - 10, class:"c-label", "font-size":11,
+      style:"fill:#20493D"});
+    t.textContent = s.n;
+    g.appendChild(t);
+  });
+}
+
+function drawFrame(){
+  const g = $("frame");
+  g.appendChild(el("circle",{cx:CX, cy:CY, r:R, fill:"none",
+    stroke:"rgba(169,138,75,.5)", "stroke-width":1.2}));
+  const marks = [["С",500,32],["Ю",500,982],["В",968,506],["З",32,506]];
+  marks.forEach(([s,x,y]) => {
+    const t = el("text",{x, y, "font-family":"ui-monospace,monospace", "font-size":15,
+      fill:"#A98A4B", "text-anchor":"middle", opacity:.8});
+    t.textContent = s; g.appendChild(t);
+  });
+  const bar = 500 * KM;
+  g.appendChild(el("line",{x1:60, y1:940, x2:60+bar, y2:940, stroke:"#A98A4B", "stroke-width":2}));
+  g.appendChild(el("line",{x1:60, y1:934, x2:60, y2:946, stroke:"#A98A4B", "stroke-width":2}));
+  g.appendChild(el("line",{x1:60+bar, y1:934, x2:60+bar, y2:946, stroke:"#A98A4B", "stroke-width":2}));
+  const t = el("text",{x:60, y:928, "font-family":"ui-monospace,monospace", "font-size":13,
+    fill:"#A98A4B"});
+  t.textContent = "500 км"; g.appendChild(t);
+}
+
+/* ---------- terminator ---------- */
+function termLongitude(age){
+  /* selenographic longitude of the sunrise/sunset line, east positive */
+  let t = 90 - (age / 29.53) * 360;      /* sunrise line: +90 at new, 0 at Q1, -90 at full */
+  if(age > 29.53 / 2) t += 180;           /* past full the visible line is the sunset one */
+  return t;
+}
+function normLon(l){ let x = ((l + 180) % 360 + 360) % 360 - 180; return x; }
+
+function drawShadow(){
+  const g = $("shadow"), b = $("termband");
+  g.textContent = ""; b.textContent = "";
+  if(!S.shadow) return;
+  const phi = 2 * Math.PI * S.age / 29.53;
+  const rx = Math.max(.05, R * Math.abs(Math.cos(phi)));
+  const shadowLeft = phi < Math.PI;                     /* waxing: lit on the right */
+  const bulgeRight = shadowLeft ? (phi < Math.PI/2) : (phi < 3*Math.PI/2);
+  const d = `M ${CX} ${CY-R} A ${R} ${R} 0 0 ${shadowLeft?0:1} ${CX} ${CY+R}` +
+            ` A ${rx.toFixed(2)} ${R} 0 0 ${bulgeRight?0:1} ${CX} ${CY-R} Z`;
+  g.appendChild(el("path",{d, fill:"#05070B", opacity:.87}));
+  /* warm glow along the terminator */
+  /* внимание: этот путь идёт T->B, обратно arc2 выше, поэтому sweep-flag зеркальный */
+  const t = `M ${CX} ${CY-R} A ${rx.toFixed(2)} ${R} 0 0 ${bulgeRight?1:0} ${CX} ${CY+R}`;
+  b.appendChild(el("path",{d:t, fill:"none", stroke:"#DDA24A", "stroke-width":10,
+    opacity:.16, filter:"url(#soft)"}));
+  b.appendChild(el("path",{d:t, fill:"none", stroke:"#DDA24A", "stroke-width":1.4, opacity:.55}));
+}
+
+/* which features sit near the terminator (and are lit) */
+function tonightPicks(){
+  const tl = normLon(termLongitude(S.age));
+  const all = [
+    ...MARIA.map((m,i) => ({...m, t:"mare", i})),
+    ...CRATERS.map((c,i) => ({...c, t:"crater", i})),
+    ...RANGES.map((r,i) => ({...r, t:"range", i}))
+  ];
+  return all
+    .filter(o => o.v <= 2 && !o.skipLabel && isLit(o.lon))
+    .map(o => ({o, dl:Math.abs(normLon(o.lon - tl))}))
+    .filter(x => x.dl < 18)
+    .sort((a,b) => a.dl - b.dl)
+    .slice(0, 7)
+    .map(x => x.o);
+}
+
+/* ---------- rendering that depends on state ---------- */
+function applyVisibility(){
+  document.querySelectorAll("[data-crater]").forEach(n => {
+    const c = CRATERS[+n.dataset.crater];
+    n.style.display = (S.binoOnly && c.v === 3) ? "none" : "";
+  });
+  document.querySelectorAll("[data-lbl-crater]").forEach(n => {
+    const i = +n.getAttribute("data-lbl-crater"), c = CRATERS[i];
+    const hideByBino = S.binoOnly && c.v === 3;
+    const show = !hideByBino && (S.allNames || c.key || S.sel === "crater:" + i);
+    n.style.display = show ? "" : "none";
+    n.style.fill = S.sel === "crater:" + i ? "#8A4B0A" : "";
+    n.style.fontWeight = S.sel === "crater:" + i ? "700" : "";
+  });
+  document.querySelectorAll("[data-lbl-range]").forEach(n => {
+    const i = +n.getAttribute("data-lbl-range"), m = RANGES[i];
+    const hideByBino = S.binoOnly && m.v === 3;
+    const show = !hideByBino && (S.allNames || m.key || S.sel === "range:" + i);
+    n.style.display = show ? "" : "none";
+    n.style.fill = S.sel === "range:" + i ? "#8A4B0A" : "";
+    n.style.fontWeight = S.sel === "range:" + i ? "700" : "";
+  });
+  document.querySelectorAll("[data-range]").forEach(n => {
+    const m = RANGES[+n.dataset.range];
+    n.style.display = (S.binoOnly && m.v === 3) ? "none" : "";
+  });
+  $("sites").style.display = S.sites ? "" : "none";
+  /* selection ring */
+  const old = $("selRing"); if(old) old.remove();
+  if(S.sel){
+    const [t, i] = S.sel.split(":");
+    let p = null, r = 26;
+    if(t === "crater"){ const c = CRATERS[+i]; p = proj(c.lat, c.lon); r = Math.max(20, c.dia*KM/2 + 10); }
+    if(t === "mare"){ const m = MARIA[+i]; p = {x:m.cx, y:m.cy}; r = Math.max(m.rx||90, m.ry||120) + 12; }
+    if(t === "range"){ const m = RANGES[+i]; p = {x:m.lx, y:m.ly}; r = 24; }
+    if(p){
+      const c = el("circle",{id:"selRing", cx:p.x, cy:p.y, r, fill:"none",
+        stroke:"#7FA79A", "stroke-width":1.6, "stroke-dasharray":"4 5", opacity:.9});
+      $("labels").appendChild(c);
+    }
+  }
+}
+
+function renderReadout(){
+  const age = S.age;
+  const illum = Math.round((1 - Math.cos(2*Math.PI*age/29.53)) / 2 * 100);
+  let name;
+  if(age < 1 || age > 28.6) name = "новолуние";
+  else if(age < 6.4) name = "молодой серп";
+  else if(age < 8.4) name = "первая четверть";
+  else if(age < 13.8) name = "растущая горбатая";
+  else if(age < 15.8) name = "полнолуние";
+  else if(age < 21.1) name = "убывающая горбатая";
+  else if(age < 23.1) name = "последняя четверть";
+  else name = "старый серп";
+  $("r-phase").textContent = name;
+  $("r-illum").textContent = illum + "%";
+  const tl = normLon(termLongitude(age));
+  $("r-term").textContent = Math.abs(Math.round(tl)) + "° " + (tl >= 0 ? "в.д." : "з.д.");
+  $("ageOut").textContent = age.toFixed(1) + " сут";
+}
+
+function renderTonight(){
+  const list = $("tonightList");
+  list.textContent = "";
+  const picks = tonightPicks();
+  if(!picks.length){
+    const p = document.createElement("p");
+    p.className = "empty";
+    p.textContent = S.age < 1.2 || S.age > 28.4
+      ? "Новолуние: диск не освещён — смотреть нечего."
+      : "У терминатора сейчас нет крупных объектов из каталога. Попробуйте сдвинуть дату на день-два.";
+    list.appendChild(p);
+    return;
+  }
+  picks.forEach(o => {
+    const li = document.createElement("li");
+    const b = document.createElement("button");
+    b.className = "nm"; b.textContent = o.ru && o.ru !== "—" ? o.ru : o.n;
+    b.addEventListener("click", () => select(o.t, o.i));
+    const s = document.createElement("span");
+    s.className = "dim"; s.textContent = dkm(o.dia);
+    li.append(b, s); list.appendChild(li);
+  });
+}
+
+function isLit(lon){
+  const tl = normLon(termLongitude(S.age));
+  if(!S.shadow) return true;
+  const waxing = S.age < 29.53/2;
+  const d = normLon(lon - tl);
+  return waxing ? d > 0 : d < 0;
+}
+
+function select(t, i){
+  S.sel = t + ":" + i;
+  const o = t === "mare" ? MARIA[i] : t === "crater" ? CRATERS[i] : RANGES[i];
+  $("c-kind").textContent = t === "mare" ? "Море · лавовая равнина"
+    : t === "crater" ? "Ударный кратер" : "Горы и разломы";
+  $("c-name").textContent = o.n;
+  $("c-ru").textContent = o.ru && o.ru !== "—" ? o.ru : "—";
+  $("c-d").textContent = dkm(o.dia);
+  $("c-h").textContent = o.dep ? ru(o.dep) + " км глубина" : o.h ? "до " + ru(o.h) + " км" : "—";
+  $("c-co").textContent = ru(Math.abs(o.lat).toFixed(1)) + "° " + (o.lat >= 0 ? "с" : "ю") +
+    " · " + ru(Math.abs(o.lon).toFixed(1)) + "° " + (o.lon >= 0 ? "в" : "з");
+  $("c-v").textContent = VIS[o.v];
+  $("c-fact").textContent = o.f;
+  const tl = normLon(termLongitude(S.age));
+  const dl = Math.abs(normLon(o.lon - tl));
+  let verdict;
+  if(!S.shadow) verdict = "Тень снята — карта показана как в полнолуние.";
+  else if(!isLit(o.lon)) verdict = "Сейчас в ночной тени: подождите " +
+    Math.max(1, Math.round(dl / 12.2)) + " сут или снимите тень.";
+  else if(dl < 10) verdict = "У самого терминатора: рельеф в максимальном контрасте — смотрите сегодня.";
+  else if(dl < 25) verdict = "Тени ещё длинные, деталь читается хорошо.";
+  else verdict = "Солнце стоит высоко: видно как пятно по яркости, без рельефа.";
+  $("c-now").textContent = verdict;
+  applyVisibility();
+}
+
+function buildCatalogue(){
+  const wrap = $("cat");
+  $("catCount").textContent = MARIA.length + CRATERS.length + RANGES.length;
+  const groups = [
+    ["Моря и океаны", MARIA.map((m,i)=>({o:m,t:"mare",i}))],
+    ["Крупные кратеры (>90 км)", CRATERS.map((c,i)=>({o:c,t:"crater",i})).filter(x=>x.o.dia>=90)],
+    ["Средние и малые кратеры", CRATERS.map((c,i)=>({o:c,t:"crater",i})).filter(x=>x.o.dia<90 && !x.o.skipLabel)],
+    ["Горы, долины, разломы", RANGES.map((m,i)=>({o:m,t:"range",i}))]
+  ];
+  groups.forEach(([title, items]) => {
+    const col = document.createElement("div"); col.className = "col";
+    const h = document.createElement("h3"); h.textContent = title; col.appendChild(h);
+    const ul = document.createElement("ul");
+    items.sort((a,b) => b.o.dia - a.o.dia).forEach(({o,t,i}) => {
+      const li = document.createElement("li");
+      const b = document.createElement("button");
+      const nm = document.createElement("span");
+      nm.textContent = o.ru && o.ru !== "—" ? o.ru : o.n;
+      const n = document.createElement("span");
+      n.className = "n";
+      n.textContent = dkm(o.dia).replace(" тыс. км", " тыс.");
+      b.append(nm, n);
+      b.addEventListener("click", () => {
+        select(t, i);
+        document.querySelector(".stage").scrollIntoView({behavior:"smooth", block:"start"});
+      });
+      li.appendChild(b); ul.appendChild(li);
+    });
+    col.appendChild(ul); wrap.appendChild(col);
+  });
+}
+
+/* ---------- wiring ---------- */
+function toggle(id, key, onLabel, offLabel){
+  const b = $(id);
+  b.addEventListener("click", () => {
+    S[key] = !S[key];
+    b.setAttribute("aria-pressed", String(S[key]));
+    if(onLabel) b.textContent = S[key] ? onLabel : offLabel;
+    applyVisibility();
+    if(key === "shadow"){ drawShadow(); renderTonight(); }
+  });
+}
+
+$("dateline").textContent =
+  NOW.getDate() + " " + MONTHS[NOW.getMonth()] + " " + NOW.getFullYear();
+$("age").value = String(TODAY_AGE);
+
+drawGrid(); drawMaria(); drawRays(); drawRanges(); drawCraters(); drawSites(); drawFrame();
+renderReadout(); drawShadow(); renderTonight(); buildCatalogue();
+select("crater", CRATERS.findIndex(c => c.n === "Copernicus"));
+
+$("age").addEventListener("input", e => {
+  S.age = parseFloat(e.target.value);
+  if(!S.shadow){ S.shadow = true; $("t-full").setAttribute("aria-pressed","false");
+    $("t-full").textContent = "Снять тень"; }
+  $("t-today").setAttribute("aria-pressed", String(Math.abs(S.age - TODAY_AGE) < .06));
+  renderReadout(); drawShadow(); renderTonight();
+  if(S.sel){ const [t,i] = S.sel.split(":"); select(t, +i); }
+});
+
+$("t-today").addEventListener("click", () => {
+  S.age = TODAY_AGE; S.shadow = true;
+  $("age").value = String(TODAY_AGE); $("t-today").setAttribute("aria-pressed","true");
+  $("t-full").setAttribute("aria-pressed","false"); $("t-full").textContent = "Снять тень";
+  renderReadout(); drawShadow(); renderTonight();
+  if(S.sel){ const [t,i] = S.sel.split(":"); select(t, +i); }
+});
+
+$("t-full").addEventListener("click", () => {
+  S.shadow = !S.shadow;
+  $("t-full").setAttribute("aria-pressed", String(!S.shadow));
+  $("t-full").textContent = S.shadow ? "Снять тень" : "Вернуть тень";
+  $("t-today").setAttribute("aria-pressed", String(S.shadow && Math.abs(S.age - TODAY_AGE) < .06));
+  drawShadow(); renderTonight();
+  if(S.sel){ const [t,i] = S.sel.split(":"); select(t, +i); }
+});
+
+toggle("t-names", "allNames");
+toggle("t-bino", "binoOnly");
+toggle("t-sites", "sites");
+applyVisibility();
+</script>
+</body>
 </html>
